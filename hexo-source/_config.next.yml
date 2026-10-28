@@ -1,0 +1,18 @@
+scheme: Gemini
+favicon:
+  small: /images/favicon-16x16-next.png
+  medium: /images/favicon-32x32-next.png
+avatar:
+  url: /images/38.jpg
+  rounded: false
+menu:
+  home: / || fa fa-home
+  archives: /archives/ || fa fa-archive
+  杂文: /categories/essays/ || fa fa-book
+  ACM: /acm/ || fa fa-code
+back2top:
+  enable: true
+motion:
+  enable: true
+custom_file_path:
+  style: source/_data/styles.styl

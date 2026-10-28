@@ -1,0 +1,401 @@
+---
+layout: false
+---
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<meta name="description" content="ACM AI Coach：算法竞赛训练计时、做题轨迹与成长分析。数据保存在本机浏览器。">
+<link rel="manifest" href="/acm-app/manifest.webmanifest">
+<link rel="icon" href="/acm-app/icon.svg" type="image/svg+xml">
+<title>ACM AI Coach · 竞赛训练记录</title>
+<style>
+:root{color-scheme:light;--bg:#f4f6fa;--panel:#fff;--text:#182230;--muted:#778196;--line:#e6eaf1;--primary:#365ee8;--primary-soft:#edf1ff;--green:#12805c;--green-soft:#e8f7f0;--amber:#b76a0b;--amber-soft:#fff4df;--red:#c43c48;--shadow:0 10px 30px rgba(29,43,76,.055);--radius:18px}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #b8c6ff;outline-offset:2px}a{color:inherit;text-decoration:none}.app{min-height:100dvh}.topbar{height:72px;background:rgba(255,255,255,.9);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 max(20px,calc((100vw - 1360px)/2));position:sticky;top:0;z-index:10;backdrop-filter:blur(16px)}.brand{display:flex;align-items:center;gap:12px}.brand-mark{width:40px;height:40px;border-radius:13px;background:#17233d;color:#fff;display:grid;place-items:center;font-weight:800;font-size:15px;letter-spacing:-1px}.brand-name{font-weight:760;letter-spacing:.1px}.brand-sub{font-size:12px;color:var(--muted);margin-top:1px}.top-right{display:flex;align-items:center;gap:10px}.local-chip{display:flex;align-items:center;gap:7px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 12px;font-size:12px;color:#566176}.dot{width:7px;height:7px;border-radius:50%;background:#21a36e}.layout{max-width:1360px;margin:0 auto;display:grid;grid-template-columns:226px minmax(0,1fr);gap:28px;padding:28px 22px 50px}.sidebar{align-self:start;position:sticky;top:96px}.side-label{font-size:11px;letter-spacing:1.2px;font-weight:750;color:#9aa3b3;margin:8px 12px 12px}.nav{display:grid;gap:6px}.nav-btn{display:flex;align-items:center;gap:12px;padding:12px 13px;border:0;background:transparent;color:#687388;border-radius:12px;text-align:left;font-weight:620;transition:.15s}.nav-btn:hover{background:#edf0f6;color:#26334b}.nav-btn.active{background:var(--primary-soft);color:var(--primary)}.nav-icon{width:22px;height:22px;display:grid;place-items:center;font-size:18px}.side-note{margin-top:30px;padding:16px;border:1px solid var(--line);border-radius:15px;background:rgba(255,255,255,.65);color:var(--muted);font-size:12px}.side-note strong{display:block;color:#4a5569;margin-bottom:5px;font-size:13px}.main{min-width:0}.page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin:5px 0 25px}.eyebrow{font-size:11px;font-weight:800;letter-spacing:1.3px;text-transform:uppercase;color:var(--primary);margin-bottom:6px}.page-head h1{font-size:27px;line-height:1.2;letter-spacing:-.8px;margin:0;font-weight:780}.page-head p{color:var(--muted);margin:8px 0 0;font-size:13px}.date-pill{white-space:nowrap;color:#6e788b;background:#fff;border:1px solid var(--line);padding:9px 12px;border-radius:11px;font-size:12px}.grid{display:grid;gap:16px}.stats-grid{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:20px}.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}.stat-card{padding:19px 20px;min-height:133px}.stat-top{display:flex;align-items:center;justify-content:space-between;color:var(--muted);font-size:12px;font-weight:620}.stat-icon{width:33px;height:33px;border-radius:11px;background:#f1f4fa;display:grid;place-items:center;color:#53617a;font-size:16px}.stat-value{font-size:29px;font-weight:780;letter-spacing:-1px;margin:12px 0 3px;line-height:1.05}.stat-foot{font-size:11px;color:#9aa3b2}.two-col{grid-template-columns:minmax(0,1.2fr) minmax(280px,.8fr)}.card-head{padding:20px 22px 0;display:flex;align-items:center;justify-content:space-between;gap:12px}.card-title{font-size:15px;font-weight:760}.card-desc{font-size:12px;color:var(--muted);margin-top:3px}.card-body{padding:18px 22px 22px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);border-radius:11px;padding:10px 14px;background:#fff;color:#48556a;font-weight:680;font-size:13px;transition:.15s;white-space:nowrap}.btn:hover{transform:translateY(-1px);box-shadow:0 5px 14px rgba(29,43,76,.08)}.btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}.btn.soft{background:var(--primary-soft);border-color:#dfe5ff;color:var(--primary)}.btn.danger{color:var(--red);background:#fff;border-color:#f3d6d9}.btn.small{padding:7px 10px;font-size:12px;border-radius:9px}.btn.full{width:100%}.quick-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.quick-card{padding:15px;border:1px solid var(--line);border-radius:14px;text-align:left;background:#fff;min-height:112px}.quick-card:hover{border-color:#b9c7ff;background:#fbfcff}.quick-symbol{font-size:20px;margin-bottom:10px}.quick-card strong{display:block;font-size:13px}.quick-card span{font-size:11px;color:var(--muted);display:block;margin-top:3px}.empty{padding:27px 15px;text-align:center;color:var(--muted);font-size:13px}.empty .empty-icon{font-size:25px;margin-bottom:7px}.record-list{display:grid;gap:10px}.record-row{display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid #eff1f5}.record-row:last-child{border-bottom:0;padding-bottom:0}.record-mark{width:39px;height:39px;flex:0 0 auto;border-radius:12px;background:#f1f4fa;display:grid;place-items:center;font-weight:800;font-size:12px;color:#5a6680}.record-main{min-width:0;flex:1}.record-title{font-weight:710;font-size:13px;overflow-wrap:anywhere}.record-meta{font-size:11px;color:var(--muted);margin-top:3px}.record-right{text-align:right;white-space:nowrap}.record-time{font-size:12px;font-weight:750}.badge{display:inline-flex;align-items:center;border-radius:7px;padding:4px 7px;font-size:10px;font-weight:750}.badge.ac{color:var(--green);background:var(--green-soft)}.badge.attempted{color:var(--amber);background:var(--amber-soft)}.badge.progress{color:var(--primary);background:var(--primary-soft)}.badge.abandoned{color:#7e8798;background:#eef0f4}.section-gap{margin-top:18px}.view{display:none}.view.active{display:block}.timer-layout{grid-template-columns:minmax(0,1fr) 290px;align-items:start}.timer-main-card{padding:26px}.timer-topline{display:flex;align-items:center;justify-content:space-between;gap:12px}.timer-label{font-size:12px;color:var(--muted);font-weight:700}.timer-problem{width:100%;margin-top:14px;border:1px solid var(--line);background:#fafbfe;border-radius:12px;padding:13px 14px;font-size:15px;font-weight:620;color:var(--text)}.phase-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:18px 0}.phase-btn{border:1px solid var(--line);border-radius:13px;padding:12px 8px;background:#fff;text-align:left;color:#5d687b;min-width:0}.phase-btn.active{border-color:#9eb0ff;background:var(--primary-soft);color:var(--primary);box-shadow:inset 0 0 0 1px #dce3ff}.phase-btn .phase-name{font-size:12px;font-weight:750;display:block}.phase-btn .phase-time{font-size:11px;display:block;margin-top:5px;opacity:.85}.clock-wrap{text-align:center;padding:25px 0 20px}.clock-phase{color:var(--muted);font-size:13px;font-weight:650}.clock{font-size:clamp(48px,8vw,76px);font-variant-numeric:tabular-nums;font-weight:780;letter-spacing:-3px;line-height:1.25;margin:8px 0 14px}.timer-controls{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}.timer-controls .btn{min-width:125px;padding:12px 17px}.timer-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;border-top:1px solid var(--line);padding-top:18px;margin-top:23px}.time-mini{padding:11px 9px;background:#f7f8fb;border-radius:11px;text-align:center}.time-mini span{display:block;font-size:10px;color:var(--muted)}.time-mini strong{display:block;font-size:13px;margin-top:4px;font-variant-numeric:tabular-nums}.hint{font-size:11px;color:var(--muted);margin-top:14px}.side-card{padding:20px}.side-card h3{margin:0 0 6px;font-size:14px}.side-card p{margin:0;color:var(--muted);font-size:12px}.side-stat{display:flex;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid #eef0f4;font-size:12px}.side-stat:last-child{border-bottom:0}.side-stat span{color:var(--muted)}.toolbar{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.field{display:grid;gap:6px}.field label{font-size:12px;font-weight:700;color:#5c6679}.input,.select,.textarea{width:100%;border:1px solid #dfe4ec;background:#fff;border-radius:10px;padding:10px 12px;color:var(--text);min-width:0}.input::placeholder,.textarea::placeholder{color:#a0a8b7}.textarea{min-height:95px;resize:vertical}.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}.field.full-span{grid-column:1/-1}.filter-input{min-width:220px;flex:1}.records-wrap{padding:20px}.records-wrap .record-row{padding:15px 0}.records-actions{display:flex;align-items:center;gap:8px}.growth-grid{grid-template-columns:minmax(0,1.2fr) minmax(280px,.8fr)}.chart{display:flex;align-items:flex-end;gap:12px;height:190px;padding:16px 4px 0}.chart-col{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:8px;flex:1;height:100%;min-width:0}.chart-bar-area{width:100%;height:140px;display:flex;align-items:flex-end;justify-content:center}.chart-bar{width:min(30px,70%);min-height:3px;background:#dce4ff;border-radius:7px 7px 3px 3px;transition:height .2s}.chart-bar.today{background:var(--primary)}.chart-value{font-size:10px;color:#778196}.chart-label{font-size:10px;color:#8892a3;white-space:nowrap}.distribution{display:grid;gap:17px}.dist-top{display:flex;justify-content:space-between;gap:10px;font-size:12px;margin-bottom:7px}.dist-top span{color:var(--muted)}.progress{height:7px;background:#eef1f6;border-radius:999px;overflow:hidden}.progress span{display:block;height:100%;background:var(--primary);border-radius:999px}.insight-list{display:grid;gap:12px}.insight{padding:14px;border:1px solid var(--line);border-radius:12px;background:#fbfcfe}.insight strong{display:block;font-size:13px}.insight p{font-size:12px;color:var(--muted);margin:4px 0 0}.profile-card{padding:23px}.profile-head{display:flex;align-items:center;gap:14px;padding-bottom:20px;margin-bottom:20px;border-bottom:1px solid var(--line)}.avatar{width:55px;height:55px;border-radius:17px;background:#17233d;color:#fff;display:grid;place-items:center;font-size:20px;font-weight:800}.profile-head h2{margin:0;font-size:18px}.profile-head p{margin:4px 0 0;color:var(--muted);font-size:12px}.backup-box{border:1px dashed #ccd3e0;border-radius:13px;padding:17px;margin-top:22px;background:#fafbfe}.backup-box h3{font-size:13px;margin:0 0 5px}.backup-box p{font-size:12px;color:var(--muted);margin:0 0 13px}.backup-actions{display:flex;gap:8px;flex-wrap:wrap}.privacy-note{margin-top:16px;font-size:11px;color:var(--muted);line-height:1.7}.modal-backdrop{position:fixed;inset:0;z-index:50;background:rgba(18,27,44,.48);display:none;align-items:center;justify-content:center;padding:18px;backdrop-filter:blur(4px)}.modal-backdrop.open{display:flex}.modal{background:#fff;width:min(620px,100%);max-height:min(90dvh,850px);overflow:auto;border-radius:20px;box-shadow:0 30px 90px rgba(10,20,40,.25)}.modal-head{padding:21px 24px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}.modal-head h2{font-size:17px;margin:0}.close-btn{border:0;background:#f0f2f6;border-radius:9px;width:33px;height:33px;font-size:19px;color:#677186}.modal-body{padding:22px 24px}.modal-foot{display:flex;justify-content:flex-end;gap:8px;padding:0 24px 22px}.checkline{display:flex;align-items:center;gap:8px;font-size:12px;color:#5d687b}.checkline input{accent-color:var(--primary)}.mobile-nav{display:none}.toast{position:fixed;z-index:80;left:50%;bottom:26px;transform:translate(-50%,20px);background:#17233d;color:#fff;padding:11px 16px;border-radius:12px;font-size:13px;box-shadow:0 10px 30px #101a3030;opacity:0;pointer-events:none;transition:.2s;max-width:calc(100vw - 30px);text-align:center}.toast.show{opacity:1;transform:translate(-50%,0)}.muted{color:var(--muted)}.mt-16{margin-top:16px}.hide{display:none!important}
+@media(max-width:1050px){.layout{grid-template-columns:190px minmax(0,1fr);gap:18px;padding:22px 16px 40px}.stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.two-col,.growth-grid{grid-template-columns:1fr}.timer-layout{grid-template-columns:1fr}.timer-side{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.side-card{margin:0!important}}
+@media(max-width:680px){body{font-size:14px}.topbar{height:62px;padding:0 15px}.brand-mark{width:36px;height:36px;border-radius:11px}.brand-sub{display:none}.brand-name{font-size:14px}.local-chip{font-size:10px;padding:7px 9px}.layout{display:block;padding:19px 13px calc(94px + env(safe-area-inset-bottom))}.sidebar{display:none}.page-head{margin:3px 0 18px}.page-head h1{font-size:24px}.page-head p{font-size:12px}.date-pill{font-size:10px;padding:7px 9px}.stats-grid{gap:10px;margin-bottom:13px}.stat-card{padding:15px;min-height:116px;border-radius:15px}.stat-value{font-size:25px}.stat-icon{width:29px;height:29px;border-radius:9px}.card{border-radius:16px}.card-head{padding:17px 16px 0}.card-body{padding:15px 16px 17px}.two-col{gap:13px}.quick-grid{gap:8px}.quick-card{padding:13px;min-height:103px}.record-row{gap:10px}.record-mark{width:35px;height:35px;border-radius:10px}.record-title{font-size:12px}.record-meta{font-size:10px}.record-right .badge{margin-top:5px}.timer-main-card{padding:17px}.phase-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.phase-btn{padding:12px}.clock{font-size:59px}.timer-controls .btn{min-width:0;flex:1}.timer-summary{gap:6px}.time-mini{padding:10px 5px}.time-mini span{font-size:9px}.time-mini strong{font-size:11px}.timer-side{grid-template-columns:1fr}.toolbar{width:100%}.filter-input{min-width:0}.records-wrap{padding:15px}.form-grid{grid-template-columns:1fr;gap:13px}.field.full-span{grid-column:auto}.profile-card{padding:17px}.backup-actions .btn{flex:1}.chart{gap:7px}.chart-value,.chart-label{font-size:9px}.chart-bar-area{height:120px}.mobile-nav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));position:fixed;z-index:20;bottom:0;left:0;right:0;padding:8px 7px calc(8px + env(safe-area-inset-bottom));background:rgba(255,255,255,.95);border-top:1px solid var(--line);backdrop-filter:blur(18px)}.mobile-nav .nav-btn{display:flex;flex-direction:column;justify-content:center;gap:3px;padding:6px 2px;border-radius:10px;font-size:10px}.mobile-nav .nav-icon{font-size:18px;height:21px}.modal-backdrop{align-items:flex-end;padding:0}.modal{border-radius:20px 20px 0 0;max-height:92dvh;padding-bottom:env(safe-area-inset-bottom)}.modal-head{padding:18px 18px 14px}.modal-body{padding:17px 18px}.modal-foot{padding:0 18px 18px}.date-pill{display:none}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+.assessment-details{border:1px solid var(--line);border-radius:12px;padding:13px 14px;background:#fafbfe}
+.assessment-details summary{font-size:13px;font-weight:750;color:#3c4c69;cursor:pointer;list-style-position:outside}
+.assessment-fields{margin-top:16px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.assessment-field-wide{grid-column:1/-1}
+.assessment-hint{font-size:11px;color:var(--muted);line-height:1.65}
+.ability-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.ability-card{padding:19px 20px}
+.ability-head{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px;font-weight:760}
+.ability-score{font-size:36px;line-height:1.25;font-weight:800;letter-spacing:-1px;margin:8px 0 3px;font-variant-numeric:tabular-nums}
+.ability-score small{font-size:14px;font-weight:650;color:var(--muted);letter-spacing:0}
+.ability-desc{font-size:11px;color:var(--muted);line-height:1.7}
+.topic-list{display:grid;gap:9px}
+.topic-item{border:1px solid var(--line);border-radius:12px;padding:11px 13px}
+.topic-name{font-weight:730;font-size:13px}
+.topic-detail{font-size:11px;color:var(--muted);margin-top:4px}
+.topic-pill{display:inline-block;background:#f1f4fc;color:#415070;border-radius:7px;padding:3px 7px;font-size:11px;margin:3px 5px 3px 0}
+@media(max-width:680px){.assessment-fields{grid-template-columns:1fr}.ability-grid{gap:10px}.ability-card{padding:15px}.ability-score{font-size:30px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="topbar">
+  <a class="brand" href="/acm-app/" aria-label="ACM AI Coach 首页"><div class="brand-mark">ACM</div><div><div class="brand-name">ACM AI Coach</div><div class="brand-sub">算法竞赛训练记录</div></div></a>
+  <div class="top-right"><div class="local-chip"><span class="dot"></span><span>本机保存</span></div></div>
+</header>
+<div class="layout">
+<aside class="sidebar">
+  <div class="side-label">训练工作台</div>
+  <nav class="nav" aria-label="主导航">
+    <button class="nav-btn active" data-view="home"><span class="nav-icon">⌂</span>训练首页</button>
+    <button class="nav-btn" data-view="timer"><span class="nav-icon">◷</span>训练计时</button>
+    <button class="nav-btn" data-view="records"><span class="nav-icon">▤</span>做题轨迹</button>
+    <button class="nav-btn" data-view="growth"><span class="nav-icon">↗</span>成长分析</button>
+    <button class="nav-btn" data-view="profile"><span class="nav-icon">◎</span>个人档案</button>
+  </nav>
+  <div class="side-note"><strong>专注训练本身</strong>只记录每道题的总耗时、完成状态与复盘。所有数据默认保存在当前浏览器。</div>
+</aside>
+<main class="main">
+<section class="view active" id="view-home">
+  <div class="page-head"><div><div class="eyebrow">TRAINING OVERVIEW</div><h1 id="welcome-title">训练首页</h1><p>把每次训练留下来，逐步看清自己的进步。</p></div><div class="date-pill" id="today-label"></div></div>
+  <div class="grid stats-grid">
+    <article class="card stat-card"><div class="stat-top"><span>今日训练时长</span><span class="stat-icon">◷</span></div><div class="stat-value" id="stat-today">0 分钟</div><div class="stat-foot">包含当前正在计时的训练</div></article>
+    <article class="card stat-card"><div class="stat-top"><span>累计训练时长</span><span class="stat-icon">⌁</span></div><div class="stat-value" id="stat-total">0 小时</div><div class="stat-foot">按已记录时长统计</div></article>
+    <article class="card stat-card"><div class="stat-top"><span>AC 题数</span><span class="stat-icon">✓</span></div><div class="stat-value" id="stat-ac">0</div><div class="stat-foot" id="stat-records-foot">共记录 0 道题</div></article>
+    <article class="card stat-card"><div class="stat-top"><span>记录 AC 率</span><span class="stat-icon">％</span></div><div class="stat-value" id="stat-rate">—</div><div class="stat-foot">按已尝试的记录计算</div></article>
+  </div>
+  <div class="ability-grid" style="margin-bottom:18px">
+    <article class="card ability-card"><div class="ability-head">思维能力（CF Rating 估值） <span class="stat-icon">∴</span></div><div class="ability-score" id="home-thinking-score">未设置</div><div class="ability-desc" id="home-thinking-detail">请在个人档案填写自评 Rating</div></article>
+    <article class="card ability-card"><div class="ability-head">程序能力（CF Rating 估值） <span class="stat-icon">⌘</span></div><div class="ability-score" id="home-coding-score">未设置</div><div class="ability-desc" id="home-coding-detail">请在个人档案填写自评 Rating</div></article>
+  </div>
+  <div class="grid two-col">
+    <article class="card"><div class="card-head"><div><div class="card-title">快速开始</div><div class="card-desc">无需选择环节，直接计时</div></div></div><div class="card-body"><div class="quick-grid" style="grid-template-columns:1fr">
+      <button class="quick-card" data-quick-phase="thinking"><div class="quick-symbol">◷</div><strong>开始本题计时</strong><span>开始 → 暂停 → 保存，一次训练只记总时长</span></button>
+    </div></div></article>
+    <article class="card"><div class="card-head"><div><div class="card-title">最近做题轨迹</div><div class="card-desc">按最近记录时间排列</div></div><button class="btn small" data-view="records">全部记录 →</button></div><div class="card-body"><div class="record-list" id="home-recent"></div></div></article>
+  </div>
+  <article class="card section-gap"><div class="card-head"><div><div class="card-title">最近 7 天训练</div><div class="card-desc">仅统计已保存到做题记录的时长</div></div><button class="btn small" data-view="growth">查看分析 →</button></div><div class="card-body"><div class="chart" id="home-chart"></div></div></article>
+</section>
+<section class="view" id="view-timer">
+  <div class="page-head"><div><div class="eyebrow">FOCUSED SESSION</div><h1>训练计时</h1><p>一题一计时，只关注总耗时。</p></div></div>
+  <div class="grid timer-layout">
+    <article class="card timer-main-card">
+      <div class="timer-topline"><div class="timer-label">当前题目</div><span class="badge progress" id="timer-state">尚未开始</span></div>
+      <input class="timer-problem" id="timer-problem" placeholder="题目名称或编号（可选）" maxlength="160">
+      <div class="clock-wrap"><div class="clock-phase">本题累计用时</div><div class="clock" id="timer-display">00:00:00</div><div class="timer-controls"><button class="btn primary" id="timer-toggle">▶ 开始计时</button><button class="btn" id="timer-reset">重置计时</button></div></div>
+      <div class="hint">暂停、刷新或关闭页面后不会丢失累计时间。保存记录后自动清空本次计时。</div>
+      <div class="mt-16"><button class="btn soft full" id="save-timed-record">结束并保存记录</button></div>
+    </article>
+    <aside class="timer-side grid">
+      <article class="card side-card"><h3>本次训练</h3><div class="side-stat mt-16"><span>累计用时</span><strong id="timer-total-side">0 分钟</strong></div><div class="side-stat"><span>题目</span><strong id="timer-title-side">未填写</strong></div></article>
+      <article class="card side-card"><h3>记录方式</h3><p>计时结束后填写 AC 状态、来源与难度即可；复盘备注可选。</p></article>
+    </aside>
+  </div>
+</section>
+<section class="view" id="view-records">
+  <div class="page-head"><div><div class="eyebrow">PROBLEM HISTORY</div><h1>做题轨迹</h1><p>保留题目来源、难度、状态与各阶段耗时。</p></div><button class="btn primary" id="new-record">＋ 新增记录</button></div>
+  <article class="card records-wrap"><div class="toolbar"><input class="input filter-input" id="record-search" placeholder="搜索题目、来源或备注…"><select class="select" id="record-status-filter" style="width:auto;min-width:120px"><option value="all">全部状态</option><option value="ac">已 AC</option><option value="attempted">尝试未 AC</option><option value="in_progress">思考中</option><option value="abandoned">暂时放弃</option></select><select class="select" id="record-sort" style="width:auto;min-width:120px"><option value="newest">最近优先</option><option value="oldest">最早优先</option><option value="longest">耗时最长</option><option value="rating">难度从高到低</option></select></div><div class="record-list mt-16" id="all-records"></div></article>
+</section>
+<section class="view" id="view-growth">
+  <div class="page-head"><div><div class="eyebrow">TRAINING INSIGHTS</div><h1>成长分析</h1><p>用训练记录观察总训练时长、AC 率和难度分布。</p></div></div>
+  <div class="ability-grid" style="margin-bottom:18px">
+    <article class="card ability-card"><div class="ability-head">思维能力（CF Rating 估值） <span class="stat-icon">∴</span></div><div class="ability-score" id="growth-thinking-score">未设置</div><div class="ability-desc" id="growth-thinking-detail">请在个人档案填写自评 Rating</div></article>
+    <article class="card ability-card"><div class="ability-head">程序能力（CF Rating 估值） <span class="stat-icon">⌘</span></div><div class="ability-score" id="growth-coding-score">未设置</div><div class="ability-desc" id="growth-coding-detail">请在个人档案填写自评 Rating</div></article>
+  </div>
+  <p class="muted" style="font-size:11px;margin:-8px 0 18px">两项均为个人填写的 CF 等效 Rating 估值，不是官方 Codeforces 账号 Rating，也不会由单题评估自动换算。请在「个人档案」中分别填写思维能力与程序能力的估计值；单题完成情况仍用于知识板块分析。</p>
+  <div class="grid stats-grid">
+    <article class="card stat-card"><div class="stat-top"><span>累计训练</span><span class="stat-icon">◷</span></div><div class="stat-value" id="growth-hours">0 小时</div><div class="stat-foot">来自已保存记录</div></article>
+    <article class="card stat-card"><div class="stat-top"><span>已 AC</span><span class="stat-icon">✓</span></div><div class="stat-value" id="growth-ac">0</div><div class="stat-foot">状态标记为已 AC 的题目</div></article>
+    <article class="card stat-card"><div class="stat-top"><span>平均每题耗时</span><span class="stat-icon">⌁</span></div><div class="stat-value" id="growth-average">—</div><div class="stat-foot">仅计算有计时的记录</div></article>
+    <article class="card stat-card"><div class="stat-top"><span>记录 AC 率</span><span class="stat-icon">％</span></div><div class="stat-value" id="growth-rate">—</div><div class="stat-foot">已 AC /（已 AC + 尝试未 AC）</div></article>
+  </div>
+  <div class="grid growth-grid">
+    <article class="card"><div class="card-head"><div><div class="card-title">最近 7 天训练时长</div><div class="card-desc">按记录日期汇总，单位为分钟</div></div></div><div class="card-body"><div class="chart" id="growth-chart"></div></div></article>
+    <article class="card"><div class="card-head"><div><div class="card-title">难度分布</div><div class="card-desc">根据你填写的题目 Rating 分组</div></div></div><div class="card-body"><div class="distribution" id="difficulty-distribution"></div></div></article>
+  </div>
+  <div id="phase-distribution" class="hide"></div>
+  <div class="grid two-col section-gap">
+    <article class="card"><div class="card-head"><div><div class="card-title">擅长与待强化板块</div><div class="card-desc">至少 3 道有评估的同类题后才判断强弱</div></div></div><div class="card-body"><div class="topic-list" id="topic-assessment">尚无足够的标注记录</div></div></article>
+    <article class="card"><div class="card-head"><div><div class="card-title">明确的知识点缺口</div><div class="card-desc">只统计你在单题记录中明确填写的知识欠缺</div></div></div><div class="card-body"><div class="topic-list" id="knowledge-gaps">尚未记录知识点缺口</div></div></article>
+  </div>
+  <article class="card section-gap"><div class="card-head"><div><div class="card-title">知识板块训练分布</div><div class="card-desc">观察不同算法板块的练习量和实际完成表现</div></div></div><div class="card-body"><div id="all-topics-summary" class="topic-list">为做题记录填写知识点后显示</div></div></article>
+  <article class="card section-gap"><div class="card-head"><div><div class="card-title">Codeforces Rating 曲线</div><div class="card-desc" id="cf-chart-subtitle">同步公开数据后显示 Rated 比赛的历史 Rating</div></div><button class="btn small" data-view="profile">同步设置 →</button></div><div class="card-body"><div id="cf-rating-chart" class="empty">暂无 Codeforces Rating 数据。请先到个人档案中同步。</div></div></article>
+  <article class="card section-gap"><div class="card-head"><div><div class="card-title">数据解读</div><div class="card-desc">仅基于当前保存的记录，不会虚构趋势</div></div></div><div class="card-body"><div class="insight-list" id="insights"></div></div></article>
+</section>
+<section class="view" id="view-profile">
+  <div class="page-head"><div><div class="eyebrow">YOUR TRAINING PROFILE</div><h1>个人档案</h1><p>设置训练目标，管理个人训练数据和备份。</p></div></div>
+  <article class="card profile-card">
+    <div class="profile-head"><div class="avatar">AC</div><div><h2 id="profile-heading">我的训练档案</h2><p>训练数据仅保存在当前浏览器，不需要注册账号。</p></div></div>
+    <form id="profile-form"><div class="form-grid">
+      <div class="field"><label for="profile-name">显示名称</label><input class="input" id="profile-name" maxlength="60" placeholder="例如 Kney"></div>
+      <div class="field"><label for="profile-handle">Codeforces 用户名</label><input class="input" id="profile-handle" maxlength="60" placeholder="例如 tourist（只读取公开数据）"></div>
+      <div class="field full-span"><label for="profile-goal">当前训练目标</label><input class="input" id="profile-goal" maxlength="160" placeholder="例如：提升独立建模与代码实现能力"></div>
+      <div class="field"><label for="profile-thinking-rating">思维能力（CF Rating 估值）</label><input class="input" id="profile-thinking-rating" type="number" min="0" max="4000" step="1" placeholder="例如 1800"></div>
+      <div class="field"><label for="profile-coding-rating">程序能力（CF Rating 估值）</label><input class="input" id="profile-coding-rating" type="number" min="0" max="4000" step="1" placeholder="例如 1600"></div>
+      <div class="field full-span"><div class="muted" style="font-size:11px">填写 0–4000 的整数，按 CF Rating 的量级自我估计。这是你的个人评估，不会覆盖或伪装成已同步的官方 CF Rating。原有单题评估会保留，但不会自动换算成这两项分数。</div></div>
+    </div><div class="mt-16"><button class="btn primary" type="submit">保存档案</button></div></form>
+    <div class="backup-box"><h3>Codeforces 公开数据同步</h3>
+    <p>填写上方 Codeforces 用户名后，点击同步。无需登录，只获取公开的 Rating 和最近 2000 次提交，按题目合并为做题轨迹；不会覆盖手动记录或编造训练时长。</p>
+    <div class="backup-actions"><button class="btn primary" id="cf-sync-btn">同步 Codeforces</button><button class="btn" id="cf-profile-link" type="button">查看 Codeforces 主页</button></div>
+    <p id="cf-sync-status" aria-live="polite" style="margin-top:12px">尚未同步</p>
+  </div>
+  <div class="backup-box"><h3>训练数据备份</h3><p>导出为 JSON 文件，换手机或清理浏览器前请先备份。导入备份会替换当前浏览器中的记录。</p><div class="backup-actions"><button class="btn primary" id="export-data">↓ 导出备份</button><button class="btn" id="import-data">↑ 导入备份</button><input id="import-file" type="file" accept=".json,application/json" class="hide"></div></div>
+    <div class="privacy-note">隐私说明：本版本不使用付费 AI API，不需要账号密码。做题记录、个人档案和计时数据保存在此浏览器的 localStorage 中；清除浏览器站点数据可能会删除记录，请定期导出备份。Codeforces 数据需要手动点击同步，云端同步尚未接入。</div>
+    <div class="mt-16"><button class="btn danger" id="clear-data">清空本机训练数据</button></div>
+  </article>
+</section>
+</main>
+</div>
+<nav class="mobile-nav" aria-label="底部导航">
+  <button class="nav-btn active" data-view="home"><span class="nav-icon">⌂</span><span>首页</span></button>
+  <button class="nav-btn" data-view="timer"><span class="nav-icon">◷</span><span>计时</span></button>
+  <button class="nav-btn" data-view="records"><span class="nav-icon">▤</span><span>做题</span></button>
+  <button class="nav-btn" data-view="growth"><span class="nav-icon">↗</span><span>成长</span></button>
+  <button class="nav-btn" data-view="profile"><span class="nav-icon">◎</span><span>档案</span></button>
+</nav>
+</div>
+<div class="modal-backdrop" id="record-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal"><div class="modal-head"><h2 id="modal-title">新增做题记录</h2><button class="close-btn" type="button" id="close-modal" aria-label="关闭">×</button></div>
+  <form id="record-form"><div class="modal-body"><div class="form-grid">
+    <div class="field full-span"><label for="record-title-input">题目名称 / 编号 *</label><input class="input" id="record-title-input" required maxlength="160" placeholder="例如：ICPC 南京 C - Topology"></div>
+    <div class="field"><label for="record-source">题目来源</label><input class="input" id="record-source" maxlength="100" placeholder="Codeforces / ICPC / QOJ"></div>
+    <div class="field"><label for="record-rating">官方 Rating / 难度</label><input class="input" id="record-rating" type="number" min="0" max="5000" placeholder="例如 2300"></div>
+    <div class="field"><label for="record-status">完成状态</label><select class="select" id="record-status"><option value="ac">已 AC</option><option value="attempted">尝试未 AC</option><option value="in_progress">思考中</option><option value="abandoned">暂时放弃</option></select></div>
+    <div class="field"><label for="record-date">训练日期</label><input class="input" id="record-date" type="date" required></div>
+    <div class="field full-span"><label for="record-notes">思路 / 卡点 / 复盘</label><textarea class="textarea" id="record-notes" maxlength="5000" placeholder="记录关键观察、证明缺口、实现错误、极端样例……"></textarea></div>
+    <details class="assessment-details field full-span" id="assessment-details">
+      <summary>思维、代码能力与知识点评估（可选）</summary>
+      <div class="assessment-fields">
+        <div class="field"><label for="record-thinking">思维：解法与证明的独立完成度</label><select class="select" id="record-thinking">
+          <option value="">未评估</option>
+          <option value="independent_proved">独立构思并证明</option>
+          <option value="independent_model">独立构思，证明待完善</option>
+          <option value="minor_hint">少量提示后构思</option>
+          <option value="guided">较多提示或参考题解</option>
+          <option value="unsolved">未构思出解法</option>
+        </select></div>
+        <div class="field"><label for="record-coding">代码：实际实现结果</label><select class="select" id="record-coding">
+          <option value="">未评估</option>
+          <option value="independent_ac">独立编码并 AC</option>
+          <option value="independent_unaccepted">独立编码但未 AC</option>
+          <option value="assisted_ac">接受协助后 AC</option>
+          <option value="not_implemented">未完成实现</option>
+        </select></div>
+        <div class="field assessment-field-wide"><label for="record-topics">涉及的知识板块 / 算法标签</label><input class="input" id="record-topics" maxlength="300" placeholder="如：树形DP、图论、组合计数（用逗号分隔）"></div>
+        <div class="field assessment-field-wide"><label for="record-gaps">明确不会 / 不熟悉的知识点</label><input class="input" id="record-gaps" maxlength="300" placeholder="如：Dinic、线性基、高斯消元（可留空）"></div>
+        <div class="assessment-hint assessment-field-wide">只评估真实参与的训练；尚未证实独立 AC，不要选择「独立编码并 AC」。Codeforces 自动同步的题目默认不计入两项能力分，除非你补充人工评估。</div>
+      </div>
+    </details>
+    <div class="field full-span" id="include-timer-wrap"><label class="checkline"><input id="include-timer" type="checkbox" checked> 附加本次计时总耗时，保存后重置计时</label></div>
+  </div></div><div class="modal-foot"><button class="btn" type="button" id="cancel-modal">取消</button><button class="btn primary" type="submit">保存记录</button></div></form>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="/acm-app/cf-sync.js"></script>
+<script src="/acm-app/assessment.js"></script>
+<script>
+(function(){
+'use strict';
+const STORAGE_KEY='acm-ai-coach-v1';
+const PHASES=['thinking','proof','coding','debugging'];
+const PHASE_NAMES={thinking:'独立思考',proof:'正确性证明',coding:'代码实现',debugging:'调试验证'};
+const CF=window.ACMCoachCF;
+const ANALYSIS=window.ACMCoachAnalysis;
+const STATUS_NAMES={ac:'已 AC',attempted:'尝试未 AC',in_progress:'思考中',abandoned:'暂时放弃'};
+const STATUS_CLASS={ac:'ac',attempted:'attempted',in_progress:'progress',abandoned:'abandoned'};
+const $=id=>document.getElementById(id);
+function todayISO(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function freshData(){return {version:1,profile:{name:'',handle:'',goal:'提升独立建模与代码实现能力',thinkingRating:null,codingRating:null},cf:{handle:'',rating:null,maxRating:null,rank:'',history:[],syncedAt:null,submissionsChecked:0},records:[],timer:{phase:'thinking',seconds:{thinking:0,proof:0,coding:0,debugging:0},active:null,title:''},updatedAt:new Date().toISOString()}}
+function loadData(){try{const raw=localStorage.getItem(STORAGE_KEY);if(!raw)return freshData();const x=JSON.parse(raw);if(!x||!Array.isArray(x.records)||!x.profile||!x.timer)throw new Error('invalid');const base=freshData();base.profile=Object.assign(base.profile,x.profile||{});base.cf=Object.assign(base.cf,x.cf||{});base.records=x.records.filter(r=>r&&r.id&&r.title).map(r=>Object.assign({source:'',rating:'',status:'in_progress',date:todayISO(),notes:'',seconds:{thinking:0,proof:0,coding:0,debugging:0},totalSeconds:0},r));base.timer.phase=PHASES.includes(x.timer.phase)?x.timer.phase:'thinking';base.timer.seconds=Object.assign(base.timer.seconds,x.timer.seconds||{});base.timer.active=x.timer.active||null;base.timer.title=x.timer.title||'';base.updatedAt=x.updatedAt||base.updatedAt;return base}catch(e){return freshData()}}
+let db=loadData(), currentView='home', toastTimer=null, editingId=null;
+function saveData(){db.updatedAt=new Date().toISOString();try{localStorage.setItem(STORAGE_KEY,JSON.stringify(db));return true}catch(e){showToast('本机存储空间不足，请先导出备份');return false}}
+function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function pad(n){return String(Math.floor(Math.max(0,n))).padStart(2,'0')}
+function fmtClock(seconds){seconds=Math.max(0,Math.floor(seconds));return pad(seconds/3600)+':'+pad((seconds%3600)/60)+':'+pad(seconds%60)}
+function fmtShort(seconds){seconds=Math.max(0,Math.floor(seconds||0));const h=Math.floor(seconds/3600),m=Math.floor((seconds%3600)/60);if(h)return h+'小时'+(m?m+'分':'');if(m)return m+'分钟';if(seconds)return seconds+'秒';return '0 分钟'}
+function fmtCompact(seconds){seconds=Math.max(0,Math.floor(seconds||0));const h=Math.floor(seconds/3600),m=Math.floor((seconds%3600)/60);if(h)return h+'h'+(m?' '+m+'m':'');if(m)return m+'m';return seconds?seconds+'s':'0m'}
+function fmtDate(date){if(!date)return '日期未记录';const a=String(date).split('-');return a.length===3?a[1]+'/'+a[2]:date}
+function activeElapsed(){if(!db.timer.active)return 0;return Math.max(0,Math.floor((Date.now()-db.timer.active.startedAt)/1000))}
+function phaseSeconds(phase){return Math.max(0,Number(db.timer.seconds[phase]||0))+(db.timer.active&&db.timer.active.phase===phase?activeElapsed():0)}
+function timerSeconds(){return PHASES.reduce((n,p)=>n+phaseSeconds(p),0)}
+function snapshotTimer(){const out={};PHASES.forEach(p=>out[p]=phaseSeconds(p));return out}
+function sumSeconds(r){if(Number.isFinite(Number(r.totalSeconds))&&Number(r.totalSeconds)>0)return Number(r.totalSeconds);return PHASES.reduce((n,p)=>n+Number((r.seconds||{})[p]||0),0)}
+function allSavedSeconds(){return db.records.reduce((n,r)=>n+sumSeconds(r),0)}
+function totalSeconds(){return allSavedSeconds()+timerSeconds()}
+function recordsAttempted(){return db.records.filter(r=>r.status==='ac'||r.status==='attempted').length}
+function acRate(){const n=recordsAttempted();return n?Math.round(db.records.filter(r=>r.status==='ac').length/n*100):null}
+function showToast(msg){const el=$('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2600)}
+function setView(view){if(!['home','timer','records','growth','profile'].includes(view))return;currentView=view;document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id==='view-'+view));document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===view));const titles={home:'训练首页',timer:'训练计时',records:'做题轨迹',growth:'成长分析',profile:'个人档案'};document.title=titles[view]+' · ACM AI Coach';if(view==='records')renderRecords();if(view==='growth')renderGrowth();if(view==='profile')fillProfile();if(view==='timer')renderTimer();window.scrollTo({top:0,behavior:'smooth'})}
+function statMarkup(title,value,foot,icon){return '<article class="card stat-card"><div class="stat-top"><span>'+esc(title)+'</span><span class="stat-icon">'+icon+'</span></div><div class="stat-value">'+esc(value)+'</div><div class="stat-foot">'+esc(foot)+'</div></article>'}
+function recordMarkup(r,withDelete){
+ const seconds=sumSeconds(r),rate=String(r.rating||'').trim();
+ const url=typeof r.url==='string'&&/^https:\/\/codeforces\.com\/problemset\/problem\/\d+\/[A-Za-z0-9]+$/.test(r.url)?r.url:null;
+ const link=url?'<a href="'+esc(url)+'" target="_blank" rel="noopener noreferrer" title="在 Codeforces 打开题目"> ↗</a>':'';
+ const edit=withDelete?'<div class="records-actions"><button class="btn small" data-edit-record="'+esc(r.id)+'" aria-label="编辑记录">编辑</button><button class="btn small danger" data-delete-record="'+esc(r.id)+'" aria-label="删除记录">删除</button></div>':'';
+ return '<div class="record-row"><div class="record-mark">'+esc((rate&&Number(rate)>0)?rate:'ACM')+'</div><div class="record-main"><div class="record-title">'+esc(r.title)+link+'</div><div class="record-meta">'+esc(r.source||'未填写来源')+' · '+esc(fmtDate(r.date))+(rate?' · Rating '+esc(rate):'')+(r.origin==='codeforces'?' · CF 同步':'')+'</div></div><div class="record-right"><div class="record-time">'+esc(fmtCompact(seconds))+'</div><span class="badge '+(STATUS_CLASS[r.status]||'progress')+'">'+esc(STATUS_NAMES[r.status]||'思考中')+'</span></div>'+edit+'</div>'
+}
+function recentRecords(){return db.records.slice().sort((a,b)=>(b.createdAt||b.date||'').localeCompare(a.createdAt||a.date||'')).slice(0,4)}
+function weekData(){const out=[];const now=new Date();for(let i=6;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth(),now.getDate()-i);const key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');const seconds=db.records.filter(r=>r.date===key).reduce((n,r)=>n+sumSeconds(r),0);out.push({key,label:(d.getMonth()+1)+'/'+d.getDate(),seconds:seconds,today:i===0})}return out}
+function chartMarkup(targetId){const days=weekData(),max=Math.max(60,...days.map(d=>d.seconds));return days.map(d=>'<div class="chart-col"><div class="chart-value">'+(d.seconds?esc(Math.round(d.seconds/60))+'m':'—')+'</div><div class="chart-bar-area"><div class="chart-bar '+(d.today?'today':'')+'" style="height:'+Math.max(3,Math.round(d.seconds/max*100))+'%"></div></div><div class="chart-label">'+esc(d.label)+'</div></div>').join('')}
+function renderHome(){const today=todayISO(),todaySecs=db.records.filter(r=>r.date===today).reduce((n,r)=>n+sumSeconds(r),0)+timerSeconds();$('today-label').textContent=new Date().toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric',weekday:'long'});$('welcome-title').textContent=db.profile.name?db.profile.name+' 的训练首页':'训练首页';$('stat-today').textContent=fmtShort(todaySecs);$('stat-total').textContent=(totalSeconds()/3600).toFixed(totalSeconds()>=36000?0:1)+' 小时';$('stat-ac').textContent=db.records.filter(r=>r.status==='ac').length;$('stat-records-foot').textContent='共记录 '+db.records.length+' 道题';const rate=acRate();$('stat-rate').textContent=rate==null?'—':rate+'%';$('home-recent').innerHTML=recentRecords().length?recentRecords().map(r=>recordMarkup(r,false)).join(''):'<div class="empty"><div class="empty-icon">▤</div>还没有做题记录。<br>完成第一次训练后，在这里查看轨迹。</div>';$('home-chart').innerHTML=chartMarkup('home-chart');renderAbilityCards('home')}
+function renderTimer(){
+  $('timer-problem').value=db.timer.title||'';
+  $('timer-display').textContent=fmtClock(timerSeconds());
+  $('timer-toggle').textContent=db.timer.active?'Ⅱ 暂停计时':'▶ 开始计时';
+  $('timer-state').textContent=db.timer.active?'计时进行中':timerSeconds()?'已暂停':'尚未开始';
+  $('timer-state').className='badge '+(db.timer.active?'ac':'progress');
+  $('timer-total-side').textContent=fmtShort(timerSeconds());
+  $('timer-title-side').textContent=db.timer.title||'未填写';
+}
+function renderRecords(){const query=($('record-search').value||'').trim().toLowerCase(),status=$('record-status-filter').value,sort=$('record-sort').value;let arr=db.records.filter(r=>(status==='all'||r.status===status)&&(!query||[r.title,r.source,r.notes,r.rating].some(v=>String(v||'').toLowerCase().includes(query))));arr.sort((a,b)=>sort==='oldest'?String(a.createdAt||a.date).localeCompare(String(b.createdAt||b.date)):sort==='longest'?sumSeconds(b)-sumSeconds(a):sort==='rating'?Number(b.rating||0)-Number(a.rating||0):String(b.createdAt||b.date).localeCompare(String(a.createdAt||a.date)));$('all-records').innerHTML=arr.length?arr.map(r=>recordMarkup(r,true)).join(''):'<div class="empty"><div class="empty-icon">⌕</div>没有匹配的记录。<br>可以调整筛选条件，或新增一条做题记录。</div>'}
+function progressMarkup(label,count,total,detail){const pct=total?Math.round(count/total*100):0;return '<div><div class="dist-top"><strong>'+esc(label)+'</strong><span>'+esc(detail||count+' 道')+'</span></div><div class="progress"><span style="width:'+pct+'%"></span></div></div>'}
+function assessmentFields(){return {thinkingEvaluation:$('record-thinking').value,codingEvaluation:$('record-coding').value,topics:ANALYSIS.csv($('record-topics').value),gaps:ANALYSIS.csv($('record-gaps').value)}}
+function fillAssessmentFields(r){const n=ANALYSIS.normalize(r||{});$('record-thinking').value=n.thinking;$('record-coding').value=n.coding;$('record-topics').value=n.topics.join('、');$('record-gaps').value=n.gaps.join('、');$('assessment-details').open=Boolean(n.thinking||n.coding||n.topics.length||n.gaps.length)}
+function renderAbilityCards(section){
+ for(const [kind,key] of [['thinking','thinkingRating'],['coding','codingRating']]){
+  const num=$(section+'-'+kind+'-score'),desc=$(section+'-'+kind+'-detail');if(!num||!desc)continue;
+  const raw=db.profile[key],rating=raw===null||raw===undefined||raw===''?null:Number(raw);
+  num.innerHTML=Number.isInteger(rating)&&rating>=0&&rating<=4000?String(rating)+'<small> CF</small>':'未设置';
+  desc.textContent=Number.isInteger(rating)&&rating>=0&&rating<=4000?'个人自评的 CF 等效水平 · 非官方账号 Rating':'请在个人档案填写个人估计值';
+ }
+}
+function topicItem(label,detail){return '<div class="topic-item"><div class="topic-name">'+esc(label)+'</div><div class="topic-detail">'+esc(detail)+'</div></div>'}
+function renderTopicInsights(){
+ const a=ANALYSIS.calculate(db.records),box=$('topic-assessment'),gapBox=$('knowledge-gaps'),allBox=$('all-topics-summary');
+ const label=value=>value===null?'未评估':value>=3.2?'表现较强':value<=2.4?'有待强化':'持续训练中';
+ if(box){
+  const strong=a.strengths.map(t=>topicItem('较强 · '+t.name,'练习 '+t.count+' 题 · 近期评估表现较强')).join('');
+  const weak=a.weaknesses.map(t=>topicItem('待强化 · '+t.name,'练习 '+t.count+' 题 · 近期评估显示需要加强')).join('');
+  box.innerHTML=strong+weak||'<div class="empty">同一知识板块至少记录 3 道题，并填写相应评估，才会判断强弱。</div>';
+ }
+ if(gapBox)gapBox.innerHTML=a.gaps.length?a.gaps.map(g=>topicItem(g.name,'明确记录为知识欠缺 '+g.count+' 次')).join(''):'<div class="empty">尚未填写知识点缺口。遇到不会或不熟悉的算法时，可以在单题记录里登记。</div>';
+ if(allBox)allBox.innerHTML=a.topics.length?a.topics.slice(0,18).map(t=>{
+  const detail='共 '+t.count+' 题 · 思维 '+label(t.thinking)+'（'+t.thinkingCount+'条）'+' · 程序 '+label(t.coding)+'（'+t.codingCount+'条）';
+  return topicItem(t.name,detail)
+ }).join(''):'<div class="empty">暂无知识板块记录。为做题记录填写知识点后开始统计。</div>';
+}
+function renderGrowth(){const saved=allSavedSeconds(),ac=db.records.filter(r=>r.status==='ac').length,rate=acRate(),timed=db.records.filter(r=>sumSeconds(r)>0),avg=timed.length?Math.round(timed.reduce((n,r)=>n+sumSeconds(r),0)/timed.length):0;$('growth-hours').textContent=(saved/3600).toFixed(saved>=36000?0:1)+' 小时';$('growth-ac').textContent=ac;$('growth-average').textContent=timed.length?fmtShort(avg):'—';$('growth-rate').textContent=rate==null?'—':rate+'%';$('growth-chart').innerHTML=chartMarkup('growth-chart');const groups=[{label:'≤ 1400',min:0,max:1400},{label:'1400–1799',min:1401,max:1799},{label:'1800–2199',min:1800,max:2199},{label:'2200+',min:2200,max:99999}];const rated=db.records.filter(r=>r.rating!==''&&r.rating!=null&&Number.isFinite(Number(r.rating)));$('difficulty-distribution').innerHTML=groups.map(g=>{const n=rated.filter(r=>Number(r.rating)>=g.min&&Number(r.rating)<=g.max).length;return progressMarkup(g.label,n,rated.length,n+' 道')}).join('')+(rated.length?'':'<div class="muted" style="font-size:11px">填写题目 Rating 后会显示难度分布。</div>');$('phase-distribution').innerHTML='';renderCfChart();const insights=[];if(!db.records.length){insights.push(['先积累第一批记录','每次训练后保存题目状态与单题总耗时，趋势分析会随着数据积累变得更有意义。'])}else{insights.push(['训练记录数量', '目前共保存 '+db.records.length+' 条做题记录，其中 '+ac+' 条标记为已 AC。']);if(!timed.length)insights.push(['补充训练计时','目前记录尚无计时时长。使用训练计时页记录单题总耗时。']);else insights.push(['单题平均耗时','有计时数据的 '+timed.length+' 条记录，平均每条约 '+fmtShort(avg)+'。']);if(rated.length<db.records.length)insights.push(['补充题目难度','已有 '+rated.length+' 条记录填写 Rating；补齐官方难度后可以更准确地观察训练分布。']);if(rate!==null)insights.push(['记录 AC 率', '当前记录的 AC 率为 '+rate+'%。它只反映你保存到本工具的题目，不等于平台全量通过率。'])}$('insights').innerHTML=insights.map(x=>'<div class="insight"><strong>'+esc(x[0])+'</strong><p>'+esc(x[1])+'</p></div>').join('');renderAbilityCards('growth');renderTopicInsights()}
+function renderCfChart(){
+ const el=$('cf-rating-chart');
+ if(!el)return;
+ const cf=db.cf||{};
+ el.innerHTML=CF.chartSvg(cf.history||[]);
+ $('cf-chart-subtitle').textContent=cf.syncedAt?
+  '账号 '+String(cf.handle||'')+' · 当前 '+(cf.rating==null?'暂无 Rating':cf.rating)+' · 最高 '+(cf.maxRating==null?'—':cf.maxRating):
+  '同步公开数据后显示 Rated 比赛的历史 Rating';
+}
+function renderCfStatus(){
+ const cf=db.cf||{};
+ const el=$('cf-sync-status');if(!el)return;
+ if(!cf.syncedAt){el.textContent='尚未同步。公开 Codeforces 资料无需账号密码。';return}
+ const d=new Date(cf.syncedAt);
+ el.textContent='上次同步：'+(Number.isFinite(d.getTime())?d.toLocaleString('zh-CN'):'未知')+
+   ' · Rating '+(cf.rating==null?'未定级':cf.rating)+
+   ' · 最高 '+(cf.maxRating==null?'—':cf.maxRating)+
+   ' · 读取最近 '+(cf.submissionsChecked||0)+' 次提交';
+}
+function fillProfile(){$('profile-name').value=db.profile.name||'';$('profile-handle').value=db.profile.handle||'';$('profile-goal').value=db.profile.goal||'';$('profile-thinking-rating').value=db.profile.thinkingRating??'';$('profile-coding-rating').value=db.profile.codingRating??'';$('profile-heading').textContent=db.profile.name?db.profile.name+' 的训练档案':'我的训练档案';renderCfStatus()}
+async function syncCodeforces(){
+ if(!CF){showToast('Codeforces 模块尚未加载，请刷新页面');return}
+ const handle=$('profile-handle').value.trim();
+ if(!CF.validateHandle(handle)){showToast('请输入正确的 Codeforces 用户名');return}
+ const button=$('cf-sync-btn');button.disabled=true;button.textContent='同步中…';
+ const status=$('cf-sync-status');
+ try{
+  status.textContent='正在读取账号资料…';
+  const users=await CF.api('user.info',{handles:handle});
+  if(!Array.isArray(users)||!users.length)throw new Error('未找到这个 Codeforces 账号');
+  await CF.delay(2200);
+  status.textContent='正在读取 Rated 比赛历史…';
+  const history=await CF.api('user.rating',{handle});
+  await CF.delay(2200);
+  status.textContent='正在读取最近 2000 次提交…';
+  const submissions=await CF.api('user.status',{handle,from:1,count:2000});
+  if(!Array.isArray(submissions))throw new Error('提交记录格式不正确');
+  const cfRecords=CF.recordsFromSubmissions(submissions);
+  const result=CF.mergeRecords(db.records,cfRecords);
+  const user=users[0];
+  db.profile.handle=handle;
+  db.cf={handle,rank:user.rank||'',rating:Number.isFinite(user.rating)?user.rating:null,
+   maxRating:Number.isFinite(user.maxRating)?user.maxRating:null,
+   history:Array.isArray(history)?history:[],syncedAt:new Date().toISOString(),
+   submissionsChecked:submissions.length};
+  if(!saveData())throw new Error('本地存储容量不足，请导出备份');
+  renderAll();
+  showToast('同步完成：新增 '+result.added+' 题，更新 '+result.updated+' 题');
+ }catch(error){
+  status.textContent='同步失败：'+(error&&error.message||'未知错误')+'。已保存的记录不会因此被清空。';
+ }finally{button.disabled=false;button.textContent='同步 Codeforces'}
+}
+function openCfProfile(){
+ const handle=$('profile-handle').value.trim();
+ if(!CF.validateHandle(handle)){showToast('请先填写 Codeforces 用户名');return}
+ window.open('https://codeforces.com/profile/'+encodeURIComponent(handle),'_blank','noopener,noreferrer');
+}
+function renderAll(){renderHome();renderTimer();if(currentView==='records')renderRecords();if(currentView==='growth')renderGrowth();if(currentView==='profile')fillProfile()}
+function commitActive(){if(!db.timer.active)return;const a=db.timer.active,elapsed=activeElapsed();db.timer.seconds[a.phase]=Number(db.timer.seconds[a.phase]||0)+elapsed;db.timer.active=null}
+function toggleTimer(){
+  if(db.timer.active){commitActive()}else{db.timer.active={phase:'thinking',startedAt:Date.now()}}
+  saveData();renderTimer();updateHomeNumbers();
+}
+function resetPhase(){
+  if(!confirm('确定清空本次计时？已保存的做题记录不会受影响。'))return;
+  db.timer.active=null;db.timer.seconds={thinking:0,proof:0,coding:0,debugging:0};db.timer.phase='thinking';
+  saveData();renderTimer();updateHomeNumbers();showToast('本次计时已重置');
+}
+function updateHomeNumbers(){if(currentView==='home')renderHome();else{const total=$('stat-total');if(total)total.textContent=(totalSeconds()/3600).toFixed(totalSeconds()>=36000?0:1)+' 小时'}}
+function openEditRecord(id){
+ const record=db.records.find(r=>String(r.id)===String(id));if(!record)return;
+ editingId=record.id;
+ $('record-form').reset();
+ $('record-title-input').value=record.title||'';
+ $('record-source').value=record.source||'';
+ $('record-rating').value=record.rating||'';
+ $('record-status').value=record.status||'in_progress';
+ $('record-date').value=record.date||todayISO();
+ $('record-notes').value=record.notes||'';
+ fillAssessmentFields(record);
+ $('include-timer').checked=false;
+ $('include-timer-wrap').classList.add('hide');
+ $('modal-title').textContent='编辑做题记录';
+ $('record-modal').classList.add('open');
+ setTimeout(()=>$('record-title-input').focus(),80);
+}
+function openRecordModal(useTimer){editingId=null;const hasTime=timerSeconds()>0;$('record-form').reset();fillAssessmentFields({});$('record-date').value=todayISO();$('record-status').value='ac';$('record-title-input').value=db.timer.title||'';$('record-source').value='';$('record-rating').value='';$('record-notes').value='';$('include-timer').checked=Boolean(useTimer&&hasTime);$('include-timer-wrap').classList.toggle('hide',!hasTime);$('modal-title').textContent='新增做题记录';$('record-modal').classList.add('open');setTimeout(()=>$('record-title-input').focus(),80)}
+function closeModal(){editingId=null;$('record-modal').classList.remove('open')}
+function saveRecord(ev){ev.preventDefault();const title=$('record-title-input').value.trim();if(!title){showToast('请填写题目名称');return}if(['independent_ac','assisted_ac'].includes($('record-coding').value)&&$('record-status').value!=='ac'){showToast('代码评估选择了已 AC，请将完成状态设为已 AC');return}
+ if(editingId!==null){
+  const old=db.records.find(r=>String(r.id)===String(editingId));
+  if(!old){showToast('这条记录已不存在');return}
+  old.title=title;old.source=$('record-source').value.trim();
+  old.rating=$('record-rating').value.trim();old.status=$('record-status').value;
+  old.date=$('record-date').value||todayISO();old.notes=$('record-notes').value.trim();Object.assign(old,assessmentFields());
+  saveData();closeModal();renderAll();showToast('记录已更新');return
+ }
+ const include=$('include-timer').checked&&timerSeconds()>0;let seconds={thinking:0,proof:0,coding:0,debugging:0};if(include){if(db.timer.active)commitActive();seconds=snapshotTimer()}const total=PHASES.reduce((n,p)=>n+seconds[p],0);const record={id:'r_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7),title:title,source:$('record-source').value.trim(),rating:$('record-rating').value.trim(),status:$('record-status').value,date:$('record-date').value||todayISO(),notes:$('record-notes').value.trim(),seconds:seconds,totalSeconds:total,createdAt:new Date().toISOString(),...assessmentFields()};db.records.push(record);if(include){db.timer.seconds={thinking:0,proof:0,coding:0,debugging:0};db.timer.active=null;db.timer.phase='thinking';db.timer.title=''}saveData();closeModal();renderAll();showToast('做题记录已保存到本机');if(currentView!=='records')setView('records')}
+function exportData(){const payload={app:'ACM AI Coach',version:1,exportedAt:new Date().toISOString(),data:db};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='acm-ai-coach-backup-'+todayISO()+'.json';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);showToast('备份文件已导出')}
+function importData(file){if(!file)return;const reader=new FileReader();reader.onload=function(){try{const parsed=JSON.parse(String(reader.result||''));const incoming=parsed.data||parsed;if(!incoming||!Array.isArray(incoming.records)||!incoming.profile||!incoming.timer)throw new Error('文件格式不正确');if(!confirm('导入备份会替换当前浏览器里的所有训练记录。是否继续？'))return;const base=freshData();base.profile=Object.assign(base.profile,incoming.profile);base.cf=Object.assign(base.cf,incoming.cf||{});base.records=incoming.records;const t=incoming.timer;base.timer.phase=PHASES.includes(t.phase)?t.phase:'thinking';base.timer.seconds=Object.assign(base.timer.seconds,t.seconds||{});base.timer.active=null;base.timer.title=t.title||'';db=base;saveData();renderAll();showToast('备份已导入；原计时已暂停')}catch(e){showToast('导入失败：请检查是否为本工具导出的 JSON 文件')}};reader.readAsText(file)}
+function deleteRecord(id){const r=db.records.find(x=>x.id===id);if(!r)return;if(!confirm('确定删除这条做题记录？此操作无法撤销，请确认已备份重要数据。'))return;db.records=db.records.filter(x=>x.id!==id);saveData();renderAll();showToast('记录已删除')}
+function clearData(){if(!confirm('确定清空本机所有训练记录、计时和档案吗？建议先导出备份。此操作无法撤销。'))return;db=freshData();saveData();renderAll();showToast('本机数据已清空')}
+document.addEventListener('click',function(e){
+  const nav=e.target.closest('[data-view]');if(nav){setView(nav.dataset.view);return}
+  const quick=e.target.closest('[data-quick-phase]');if(quick){db.timer.phase='thinking';if(!db.timer.active)db.timer.active={phase:'thinking',startedAt:Date.now()};saveData();setView('timer');renderTimer();return}
+  const edit=e.target.closest('[data-edit-record]');if(edit){openEditRecord(edit.dataset.editRecord);return}
+  const del=e.target.closest('[data-delete-record]');if(del){deleteRecord(del.dataset.deleteRecord);return}
+});
+$('timer-toggle').addEventListener('click',toggleTimer);$('timer-reset').addEventListener('click',resetPhase);$('timer-problem').addEventListener('input',function(){db.timer.title=this.value;saveData();$('timer-title-side').textContent=db.timer.title||'未填写'});$('save-timed-record').addEventListener('click',()=>openRecordModal(true));$('new-record').addEventListener('click',()=>openRecordModal(false));$('close-modal').addEventListener('click',closeModal);$('cancel-modal').addEventListener('click',closeModal);$('record-modal').addEventListener('click',e=>{if(e.target===$('record-modal'))closeModal()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});$('record-form').addEventListener('submit',saveRecord);
+$('record-search').addEventListener('input',renderRecords);$('record-status-filter').addEventListener('change',renderRecords);$('record-sort').addEventListener('change',renderRecords);
+$('profile-form').addEventListener('submit',function(e){e.preventDefault();const parseRating=id=>{const raw=$(id).value.trim();if(!raw)return null;const n=Number(raw);return Number.isInteger(n)&&n>=0&&n<=4000?n:NaN};const thinkingRating=parseRating('profile-thinking-rating'),codingRating=parseRating('profile-coding-rating');if(Number.isNaN(thinkingRating)||Number.isNaN(codingRating)){showToast('CF 等效 Rating 请填写 0–4000 的整数');return}db.profile.name=$('profile-name').value.trim();db.profile.handle=$('profile-handle').value.trim();db.profile.goal=$('profile-goal').value.trim();db.profile.thinkingRating=thinkingRating;db.profile.codingRating=codingRating;saveData();fillProfile();renderHome();renderGrowth();showToast('个人档案已保存')});
+$('cf-sync-btn').addEventListener('click',syncCodeforces);$('cf-profile-link').addEventListener('click',openCfProfile);
+$('export-data').addEventListener('click',exportData);$('import-data').addEventListener('click',()=>$('import-file').click());$('import-file').addEventListener('change',function(){if(this.files&&this.files[0])importData(this.files[0]);this.value=''});$('clear-data').addEventListener('click',clearData);
+window.addEventListener('beforeunload',function(){saveData()});
+function tick(){if(db.timer.active){
+  $('timer-display').textContent=fmtClock(timerSeconds());
+  $('timer-total-side').textContent=fmtShort(timerSeconds());
+  if(currentView==='home')renderHome();
+}}
+renderAll();setInterval(tick,1000);
+if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/acm-app/sw.js').catch(function(){})})}
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,168 @@
+name: Build and publish Kney's Hexo blog
+
+on:
+  push:
+    branches:
+      - main
+      - hexo-source-recovery-2026-10-28
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kney-blog-build
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Hexo dependencies
+        working-directory: hexo-source
+        run: npm install --no-audit --no-fund
+
+      - name: Build site
+        working-directory: hexo-source
+        run: npm run build
+
+      - name: Verify encrypted essay reader JavaScript
+        working-directory: hexo-source
+        run: node tools/test-essay-reader.js
+
+      - name: Test ACM Coach assessment logic
+        working-directory: hexo-source
+        run: node tools/test-assessment.js
+
+      - name: Verify generated pages and assets
+        working-directory: hexo-source
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test -s public/index.html
+          test -s public/acm/index.html
+          test ! -e public/2022/09/26/hello-world/index.html
+          test ! -e public/2022/09/26/text/index.html
+          test -s public/2022/09/29/随笔/index.html
+          test -s public/2022/11/10/落幕/index.html
+          test -s public/2022/11/10/夏记/index.html
+          test ! -e public/2022/11/12/喜欢/index.html
+          test -s public/archives/index.html
+          test -s public/categories/essays/index.html
+          for name in 随笔 落幕 夏记; do
+            test -s "public/protected/$name.json"
+            grep -Fq '"alg":"AES-256-GCM"' "public/protected/$name.json"
+          done
+          for f in public/2022/09/29/随笔/index.html public/2022/11/10/落幕/index.html public/2022/11/10/夏记/index.html; do
+            grep -Fq 'id="essay-encrypted-content"' "$f"
+          done
+          ! grep -Fq '风起银铃轻涌' public/2022/09/29/随笔/index.html
+          ! grep -Fq '钟声已响，你也该步入旅途了' public/2022/11/10/落幕/index.html
+          ! grep -Fq '少年的梦终是醒了' public/2022/11/10/夏记/index.html
+          for page in public/categories/essays/index.html public/2022/09/29/随笔/index.html public/2022/11/10/落幕/index.html public/2022/11/10/夏记/index.html; do
+            grep -Fq 'id="essay-gate-form"' "$page"
+            grep -Fq 'class="essay-locked"' "$page"
+            grep -Fq 'id="essay-gate-script"' "$page"
+          done
+          grep -Fq '此文已加密' public/index.html
+          ! grep -Fq '风起银铃轻涌' public/index.html
+          ! grep -Fq '少年的梦终是醒了' public/index.html
+          ! grep -Fq '钟声已响，你也该步入旅途了' public/index.html
+          grep -q '分类: 杂文' public/categories/essays/index.html
+          ! grep -Fq '/2022/11/12/喜欢/' public/categories/essays/index.html
+          ! grep -Fq '/2022/11/12/喜欢/' public/index.html
+          ! grep -Fq '/2022/11/12/喜欢/' public/archives/index.html
+          grep -q '夏记' public/categories/essays/index.html
+          grep -q '落幕' public/categories/essays/index.html
+          grep -q '随笔' public/categories/essays/index.html
+          ! grep -Fq '/2022/09/26/hello-world/' public/categories/essays/index.html
+          ! grep -Fq '/2022/09/26/text/' public/categories/essays/index.html
+          ! grep -Fq '/2022/09/26/hello-world/' public/index.html
+          ! grep -Fq '/2022/09/26/text/' public/index.html
+          ! grep -Fq '/2022/09/26/hello-world/' public/archives/index.html
+          ! grep -Fq '/2022/09/26/text/' public/archives/index.html
+          test -s public/tags/随笔/index.html
+          test -s public/images/background.jpg
+          test -s public/css/main.css
+          test -f public/.nojekyll
+          test -s public/acm-app/index.html
+          test -s public/acm-app/manifest.webmanifest
+          test -s public/acm-app/icon.svg
+          test -s public/acm-app/sw.js
+          test -s public/acm-app/cf-sync.js
+          test -s public/acm-app/assessment.js
+          grep -Fq 'assessment.js' public/acm-app/index.html
+          grep -Fq 'id="home-thinking-score"' public/acm-app/index.html
+          grep -Fq 'id="home-coding-score"' public/acm-app/index.html
+          grep -Fq 'id="knowledge-gaps"' public/acm-app/index.html
+          grep -Fq 'id="topic-assessment"' public/acm-app/index.html
+          grep -Fq 'function renderTopicInsights' public/acm-app/index.html
+          grep -Fq 'cf-sync.js' public/acm-app/index.html
+          grep -Fq 'id="cf-sync-btn"' public/acm-app/index.html
+          grep -Fq 'id="cf-rating-chart"' public/acm-app/index.html
+          grep -Fq 'recordsFromSubmissions' public/acm-app/cf-sync.js
+          grep -Fq 'id="profile-thinking-rating"' public/acm-app/index.html
+          grep -Fq 'id="profile-coding-rating"' public/acm-app/index.html
+          grep -Fq 'CF Rating 估值' public/acm-app/index.html
+          ! grep -Fq '0–100 的训练表现指数' public/acm-app/index.html
+          ! grep -Fq '<small> / 100</small>' public/acm-app/index.html
+          ! grep -Fq 'score:100' public/acm-app/assessment.js
+          grep -Fq 'b990a8e291c20d19ef1c8492d15217e39898b40879d88b5dc12c50d5022cf9d1' public/categories/essays/index.html
+          grep -Fq 'essay-gate-script' public/categories/essays/index.html
+          ! grep -Fq 'adc43aa5d3a9b8c416d46f716f9a14af801c498ab1d81e763c6d5567c617cd82' public/categories/essays/index.html
+          grep -Fq '?rev=20261028-encrypted-v6' public/index.html
+          grep -Fq '?rev=20261028-encrypted-v6' public/categories/essays/index.html
+          grep -q "ACM AI Coach" public/acm-app/index.html
+          grep -q "localStorage" public/acm-app/index.html
+          echo "Checking generated ACM page"
+          grep -q "ACM / ICPC" public/acm/index.html
+          echo "Checking original 落幕 post"
+          grep -Fq 'id="essay-encrypted-content"' public/2022/11/10/落幕/index.html
+          echo "Checking original 夏记 post"
+          grep -Fq 'id="essay-encrypted-content"' public/2022/11/10/夏记/index.html
+          echo "Verifying private post is not published"
+          ! grep -Fq 'I Really Want to Stay at Your House' public/index.html
+          echo "Checking original background CSS"
+          grep -q "background.jpg" public/css/main.css
+          echo "Verified three retained legacy posts and removal of Hello World/text/喜欢, ACM page, tags, original background, and nojekyll marker."
+
+      - name: Keep a preview artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: kney-hexo-preview
+          path: hexo-source/public
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Publish generated static files to the main branch
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        shell: bash
+        run: |
+          set -euo pipefail
+          rsync -a --delete \
+            --exclude='/.git/' \
+            --exclude='/.github/' \
+            --exclude='/hexo-source/' \
+            --exclude='/README.md' \
+            --exclude='/.gitignore' \
+            hexo-source/public/ ./
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A -- . ':!hexo-source' ':!.github'
+          if ! git diff --cached --quiet; then
+            git commit -m "Deploy generated Hexo site [skip ci]"
+            git push
+          else
+            echo "Generated site matches the currently published files."
+          fi
