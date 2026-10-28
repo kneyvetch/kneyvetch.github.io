@@ -50,10 +50,17 @@ jobs:
           test -s public/2022/11/10/落幕/index.html
           test -s public/2022/11/10/夏记/index.html
           test -s public/2022/11/12/喜欢/index.html
+          test -s public/archives/index.html
+          test -s public/tags/随笔/index.html
           test -s public/images/background.jpg
           test -s public/css/main.css
           test -f public/.nojekyll
-          echo "Verified six legacy posts, ACM page, theme CSS, background, and nojekyll marker."
+          grep -q "ACM / ICPC" public/acm/index.html
+          grep -q "钟声已响" public/2022/11/10/落幕/index.html
+          grep -q "少年" public/2022/11/10/夏记/index.html
+          grep -q "I Really Want to Stay at Your House" public/2022/11/12/喜欢/index.html
+          grep -q "background.jpg" public/css/main.css
+          echo "Verified six legacy posts, ACM page, tags, original background, and nojekyll marker."
 
       - name: Keep a preview artifact
         uses: actions/upload-artifact@v4
