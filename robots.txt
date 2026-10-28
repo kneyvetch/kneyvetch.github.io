@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /protected/
+
+# Encrypted essay HTML remains crawlable so its noindex directives can be respected.
