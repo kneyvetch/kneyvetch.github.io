@@ -43,7 +43,9 @@ jobs:
 
       - name: Test ACM Coach assessment logic
         working-directory: hexo-source
-        run: node tools/test-assessment.js
+        run: |
+          node tools/test-assessment.js
+          node --test tools/test-evidence.js tools/test-cf-sync.js
 
       - name: Verify generated pages and assets
         working-directory: hexo-source
@@ -173,3 +175,4 @@ jobs:
               echo "Deleted legacy preview artifact $id"
             fi
           done < /tmp/legacy_preview_artifacts
+
