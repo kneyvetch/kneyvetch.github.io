@@ -3,3 +3,6 @@ public/
 themes/next/
 package-lock.json
 .DS_Store
+source/images/
+source/js/
+source/lib/
