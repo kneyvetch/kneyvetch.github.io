@@ -1,6 +1,6 @@
 'use strict';
-const CACHE_NAME = 'acm-ai-coach-shell-v4';
-const APP_SHELL = ['/acm-app/', '/acm-app/cf-sync.js', '/acm-app/assessment.js', '/acm-app/manifest.webmanifest', '/acm-app/icon.svg'];
+const CACHE_NAME = 'acm-ai-coach-shell-v5';
+const APP_SHELL = ['/acm-app/', '/acm-app/cf-sync.js?v=20261028-evidence', '/acm-app/assessment.js?v=20261028-evidence', '/acm-app/manifest.webmanifest', '/acm-app/icon.svg'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL)).then(() => self.skipWaiting()));
 });
@@ -29,3 +29,4 @@ self.addEventListener('fetch', event => {
     return response;
   })));
 });
+

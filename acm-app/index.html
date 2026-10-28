@@ -31,6 +31,7 @@
 .topic-detail{font-size:11px;color:var(--muted);margin-top:4px}
 .topic-pill{display:inline-block;background:#f1f4fc;color:#415070;border-radius:7px;padding:3px 7px;font-size:11px;margin:3px 5px 3px 0}
 @media(max-width:680px){.assessment-fields{grid-template-columns:1fr}.ability-grid{gap:10px}.ability-card{padding:15px}.ability-score{font-size:30px}}
+.evidence-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.evidence-metric{background:var(--bg);padding:16px;border-radius:12px}.evidence-number{font-size:27px;font-weight:750;margin:8px 0}.evidence-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.evidence-note{font-size:12px;color:var(--muted);line-height:1.8}.trend-scroll{overflow-x:auto}.trend-table{width:100%;border-collapse:collapse;font-size:12px}.trend-table th,.trend-table td{text-align:left;padding:9px;border-bottom:1px solid var(--line);white-space:nowrap}.record-evidence{font-size:11px;color:var(--muted);margin-top:5px;white-space:normal;overflow-wrap:anywhere}.topic-item{overflow-wrap:anywhere}#record-scope{padding:0 16px}#record-scope:empty{display:none}@media(max-width:600px){.evidence-grid{grid-template-columns:1fr}.evidence-number{font-size:23px}}
 </style>
 </head>
 <body>
@@ -90,7 +91,7 @@
 </section>
 <section class="view" id="view-records">
   <div class="page-head"><div><div class="eyebrow">PROBLEM HISTORY</div><h1>做题轨迹</h1><p>保留题目来源、难度、状态与各阶段耗时。</p></div><button class="btn primary" id="new-record">＋ 新增记录</button></div>
-  <article class="card records-wrap"><div class="toolbar"><input class="input filter-input" id="record-search" placeholder="搜索题目、来源或备注…"><select class="select" id="record-status-filter" style="width:auto;min-width:120px"><option value="all">全部状态</option><option value="ac">已 AC</option><option value="attempted">尝试未 AC</option><option value="in_progress">思考中</option><option value="abandoned">暂时放弃</option></select><select class="select" id="record-sort" style="width:auto;min-width:120px"><option value="newest">最近优先</option><option value="oldest">最早优先</option><option value="longest">耗时最长</option><option value="rating">难度从高到低</option></select></div><div class="record-list mt-16" id="all-records"></div></article>
+  <article class="card records-wrap"><div class="toolbar"><input class="input filter-input" id="record-search" placeholder="搜索题目、算法标签、缺口或备注…" aria-label="搜索训练记录"><select class="select" id="record-status-filter" style="width:auto;min-width:120px"><option value="all">全部状态</option><option value="ac">已 AC</option><option value="attempted">尝试未 AC</option><option value="in_progress">思考中</option><option value="abandoned">暂时放弃</option></select><select class="select" id="record-evidence-filter" aria-label="训练证据筛选" style="width:auto"><option value="all">全部评估</option><option value="missing">待补评估</option><option value="untagged">待补标签</option><option value="gaps">有待复习缺口</option></select><select class="select" id="record-sort" style="width:auto;min-width:120px"><option value="newest">最近优先</option><option value="oldest">最早优先</option><option value="longest">耗时最长</option><option value="rating">难度从高到低</option></select></div><div id="record-scope" aria-live="polite"></div><div class="record-list mt-16" id="all-records"></div></article>
 </section>
 <section class="view" id="view-growth">
   <div class="page-head"><div><div class="eyebrow">TRAINING INSIGHTS</div><h1>成长分析</h1><p>用训练记录观察总训练时长、AC 率和难度分布。</p></div></div>
@@ -109,10 +110,12 @@
     <article class="card"><div class="card-head"><div><div class="card-title">最近 7 天训练时长</div><div class="card-desc">按记录日期汇总，单位为分钟</div></div></div><div class="card-body"><div class="chart" id="growth-chart"></div></div></article>
     <article class="card"><div class="card-head"><div><div class="card-title">难度分布</div><div class="card-desc">根据你填写的题目 Rating 分组</div></div></div><div class="card-body"><div class="distribution" id="difficulty-distribution"></div></div></article>
   </div>
+  <article class="card section-gap"><div class="card-head"><div><div class="card-title">训练证据与可信度</div><div class="card-desc">单题自评的近期表现 · 与上方个人 CF 估值分开呈现</div></div></div><div class="card-body"><div id="training-evidence"></div><details class="evidence-note mt-16"><summary>如何计算与解读</summary><p>思维量表 0–4：未构思出解法、较多提示、少量提示、独立构思、独立构思并证明。代码量表 1–4：未完成实现、协助后 AC、独立编码未 AC、独立编码并 AC。均值是自评量表的描述统计，不能换算为 CF Rating，也不能比较两种量表的高低。</p><p>每项取按训练日期排序的最近 30 条有效自评。重复记录 ID 或相同 CF 题号只取第一条；未评估不当作 0 分。标签强弱按每个指标分别至少 3 题判断：均值 ≥3.2 为较强，≤2.4 为待强化。样本门槛不是统计置信度；题目难度和选择偏差仍会影响结果。</p><p>常见中英文标签按别名合并；原始记录不会被自动改写。未练习或未标注的知识点只能视为证据不足，不能推断为不会。</p></details></div></article>
+  <article class="card section-gap"><div class="card-head"><div><div class="card-title">思维 / 代码训练表现趋势</div><div class="card-desc">最近 28 天与之前 28 天 · 以训练日期归属，不按补录时间</div></div></div><div class="card-body" id="training-trend"></div></article>
   <div id="phase-distribution" class="hide"></div>
   <div class="grid two-col section-gap">
-    <article class="card"><div class="card-head"><div><div class="card-title">擅长与待强化板块</div><div class="card-desc">至少 3 道有评估的同类题后才判断强弱</div></div></div><div class="card-body"><div class="topic-list" id="topic-assessment">尚无足够的标注记录</div></div></article>
-    <article class="card"><div class="card-head"><div><div class="card-title">明确的知识点缺口</div><div class="card-desc">只统计你在单题记录中明确填写的知识欠缺</div></div></div><div class="card-body"><div class="topic-list" id="knowledge-gaps">尚未记录知识点缺口</div></div></article>
+    <article class="card"><div class="card-head"><div><div class="card-title">擅长与待强化板块</div><div class="card-desc">每个指标分别至少 3 道有评估的同类题后才判断强弱</div></div></div><div class="card-body"><div class="topic-list" id="topic-assessment">尚无足够的标注记录</div></div></article>
+    <article class="card"><div class="card-head"><div><div class="card-title">明确的知识点缺口</div><div class="card-desc">保留缺口历史；复习标记仅表示个人确认，不自动提高评分</div></div></div><div class="card-body"><div class="topic-list" id="knowledge-gaps">尚未记录知识点缺口</div></div></article>
   </div>
   <article class="card section-gap"><div class="card-head"><div><div class="card-title">知识板块训练分布</div><div class="card-desc">观察不同算法板块的练习量和实际完成表现</div></div></div><div class="card-body"><div id="all-topics-summary" class="topic-list">为做题记录填写知识点后显示</div></div></article>
   <article class="card section-gap"><div class="card-head"><div><div class="card-title">Codeforces Rating 曲线</div><div class="card-desc" id="cf-chart-subtitle">同步公开数据后显示 Rated 比赛的历史 Rating</div></div><button class="btn small" data-view="profile">同步设置 →</button></div><div class="card-body"><div id="cf-rating-chart" class="empty">暂无 Codeforces Rating 数据。请先到个人档案中同步。</div></div></article>
@@ -187,8 +190,8 @@
   </div>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="/acm-app/cf-sync.js"></script>
-<script src="/acm-app/assessment.js"></script>
+<script src="/acm-app/cf-sync.js?v=20261028-evidence"></script>
+<script src="/acm-app/assessment.js?v=20261028-evidence"></script>
 <script>
 (function(){
 'use strict';
@@ -202,8 +205,8 @@ const STATUS_CLASS={ac:'ac',attempted:'attempted',in_progress:'progress',abandon
 const $=id=>document.getElementById(id);
 function todayISO(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function freshData(){return {version:1,profile:{name:'',handle:'',goal:'提升独立建模与代码实现能力',thinkingRating:null,codingRating:null},cf:{handle:'',rating:null,maxRating:null,rank:'',history:[],syncedAt:null,submissionsChecked:0},records:[],timer:{phase:'thinking',seconds:{thinking:0,proof:0,coding:0,debugging:0},active:null,title:''},updatedAt:new Date().toISOString()}}
-function loadData(){try{const raw=localStorage.getItem(STORAGE_KEY);if(!raw)return freshData();const x=JSON.parse(raw);if(!x||!Array.isArray(x.records)||!x.profile||!x.timer)throw new Error('invalid');const base=freshData();base.profile=Object.assign(base.profile,x.profile||{});base.cf=Object.assign(base.cf,x.cf||{});base.records=x.records.filter(r=>r&&r.id&&r.title).map(r=>Object.assign({source:'',rating:'',status:'in_progress',date:todayISO(),notes:'',seconds:{thinking:0,proof:0,coding:0,debugging:0},totalSeconds:0},r));base.timer.phase=PHASES.includes(x.timer.phase)?x.timer.phase:'thinking';base.timer.seconds=Object.assign(base.timer.seconds,x.timer.seconds||{});base.timer.active=x.timer.active||null;base.timer.title=x.timer.title||'';base.updatedAt=x.updatedAt||base.updatedAt;return base}catch(e){return freshData()}}
-let db=loadData(), currentView='home', toastTimer=null, editingId=null;
+function loadData(){try{const raw=localStorage.getItem(STORAGE_KEY);if(!raw)return freshData();const x=JSON.parse(raw);if(!x||!Array.isArray(x.records)||!x.profile||!x.timer)throw new Error('invalid');const base=freshData();base.profile=Object.assign(base.profile,x.profile||{});base.cf=Object.assign(base.cf,x.cf||{});base.records=x.records.filter(r=>r&&r.id&&r.title).map(r=>Object.assign({source:'',rating:'',status:'in_progress',date:'',notes:'',seconds:{thinking:0,proof:0,coding:0,debugging:0},totalSeconds:0},r));base.timer.phase=PHASES.includes(x.timer.phase)?x.timer.phase:'thinking';base.timer.seconds=Object.assign(base.timer.seconds,x.timer.seconds||{});base.timer.active=x.timer.active||null;base.timer.title=x.timer.title||'';base.updatedAt=x.updatedAt||base.updatedAt;return base}catch(e){return freshData()}}
+let db=loadData(), currentView='home', toastTimer=null, editingId=null, evidenceScope=null;
 function saveData(){db.updatedAt=new Date().toISOString();try{localStorage.setItem(STORAGE_KEY,JSON.stringify(db));return true}catch(e){showToast('本机存储空间不足，请先导出备份');return false}}
 function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function pad(n){return String(Math.floor(Math.max(0,n))).padStart(2,'0')}
@@ -227,8 +230,10 @@ function recordMarkup(r,withDelete){
  const seconds=sumSeconds(r),rate=String(r.rating||'').trim();
  const url=typeof r.url==='string'&&/^https:\/\/codeforces\.com\/problemset\/problem\/\d+\/[A-Za-z0-9]+$/.test(r.url)?r.url:null;
  const link=url?'<a href="'+esc(url)+'" target="_blank" rel="noopener noreferrer" title="在 Codeforces 打开题目"> ↗</a>':'';
+ const n=ANALYSIS.normalize(r);
+ const evidence='<div class="record-evidence">'+esc(n.topics.join(' · ')||'待补标签')+'<br>'+esc('思维：'+(n.thinking?ANALYSIS.THINKING[n.thinking].label:'未评估')+' · 代码：'+(n.coding?ANALYSIS.CODING[n.coding].label:'未评估'))+(n.gaps.length?'<br>'+esc('缺口：'+n.gaps.map(g=>g+(n.resolvedGaps.includes(g)?'（已复习）':'（待复习）')).join('、')):'')+'</div>';
  const edit=withDelete?'<div class="records-actions"><button class="btn small" data-edit-record="'+esc(r.id)+'" aria-label="编辑记录">编辑</button><button class="btn small danger" data-delete-record="'+esc(r.id)+'" aria-label="删除记录">删除</button></div>':'';
- return '<div class="record-row"><div class="record-mark">'+esc((rate&&Number(rate)>0)?rate:'ACM')+'</div><div class="record-main"><div class="record-title">'+esc(r.title)+link+'</div><div class="record-meta">'+esc(r.source||'未填写来源')+' · '+esc(fmtDate(r.date))+(rate?' · Rating '+esc(rate):'')+(r.origin==='codeforces'?' · CF 同步':'')+'</div></div><div class="record-right"><div class="record-time">'+esc(fmtCompact(seconds))+'</div><span class="badge '+(STATUS_CLASS[r.status]||'progress')+'">'+esc(STATUS_NAMES[r.status]||'思考中')+'</span></div>'+edit+'</div>'
+ return '<div class="record-row"><div class="record-mark">'+esc((rate&&Number(rate)>0)?rate:'ACM')+'</div><div class="record-main"><div class="record-title">'+esc(r.title)+link+'</div><div class="record-meta">'+esc(r.source||'未填写来源')+' · '+esc(fmtDate(r.date))+(rate?' · Rating '+esc(rate):'')+(r.origin==='codeforces'?' · CF 同步':'')+'</div>'+evidence+'</div><div class="record-right"><div class="record-time">'+esc(fmtCompact(seconds))+'</div><span class="badge '+(STATUS_CLASS[r.status]||'progress')+'">'+esc(STATUS_NAMES[r.status]||'思考中')+'</span></div>'+edit+'</div>'
 }
 function recentRecords(){return db.records.slice().sort((a,b)=>(b.createdAt||b.date||'').localeCompare(a.createdAt||a.date||'')).slice(0,4)}
 function weekData(){const out=[];const now=new Date();for(let i=6;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth(),now.getDate()-i);const key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');const seconds=db.records.filter(r=>r.date===key).reduce((n,r)=>n+sumSeconds(r),0);out.push({key,label:(d.getMonth()+1)+'/'+d.getDate(),seconds:seconds,today:i===0})}return out}
@@ -243,7 +248,19 @@ function renderTimer(){
   $('timer-total-side').textContent=fmtShort(timerSeconds());
   $('timer-title-side').textContent=db.timer.title||'未填写';
 }
-function renderRecords(){const query=($('record-search').value||'').trim().toLowerCase(),status=$('record-status-filter').value,sort=$('record-sort').value;let arr=db.records.filter(r=>(status==='all'||r.status===status)&&(!query||[r.title,r.source,r.notes,r.rating].some(v=>String(v||'').toLowerCase().includes(query))));arr.sort((a,b)=>sort==='oldest'?String(a.createdAt||a.date).localeCompare(String(b.createdAt||b.date)):sort==='longest'?sumSeconds(b)-sumSeconds(a):sort==='rating'?Number(b.rating||0)-Number(a.rating||0):String(b.createdAt||b.date).localeCompare(String(a.createdAt||a.date)));$('all-records').innerHTML=arr.length?arr.map(r=>recordMarkup(r,true)).join(''):'<div class="empty"><div class="empty-icon">⌕</div>没有匹配的记录。<br>可以调整筛选条件，或新增一条做题记录。</div>'}
+function renderRecords(){
+ const query=($('record-search').value||'').trim().toLowerCase(),status=$('record-status-filter').value,sort=$('record-sort').value,filter=$('record-evidence-filter').value;
+ const tagQuery=ANALYSIS.labels([query])[0]||query;
+ let arr=db.records.filter(r=>{
+  const n=ANALYSIS.normalize(r);
+  return (status==='all'||r.status===status)&&(!query||[r.title,r.source,r.notes,r.rating,...ANALYSIS.csv(r.topics),...n.topics,...n.gaps].some(v=>String(v||'').toLowerCase().includes(query))||[...n.topics,...n.gaps].some(v=>v.toLowerCase().includes(tagQuery.toLowerCase())))&&
+   (filter!=='missing'||!n.thinking||!n.coding)&&(filter!=='untagged'||!n.topics.length)&&(filter!=='gaps'||n.gaps.some(g=>!n.resolvedGaps.includes(g)))&&
+   (!evidenceScope||n[evidenceScope.kind].includes(evidenceScope.name));
+ });
+ arr.sort((a,b)=>sort==='oldest'?String(a.date||'').localeCompare(String(b.date||'')):sort==='longest'?sumSeconds(b)-sumSeconds(a):sort==='rating'?Number(b.rating||0)-Number(a.rating||0):String(b.date||'').localeCompare(String(a.date||'')));
+ $('record-scope').innerHTML='<span class="evidence-note">匹配 '+arr.length+' 条'+(evidenceScope?' · '+esc(evidenceScope.name):'')+'</span>'+(evidenceScope?' <button class="btn small" data-clear-scope>清除知识点筛选</button>':'');
+ $('all-records').innerHTML=arr.length?arr.map(r=>recordMarkup(r,true)).join(''):'<div class="empty">没有匹配的记录。可以调整筛选条件，或新增训练记录。</div>';
+}
 function progressMarkup(label,count,total,detail){const pct=total?Math.round(count/total*100):0;return '<div><div class="dist-top"><strong>'+esc(label)+'</strong><span>'+esc(detail||count+' 道')+'</span></div><div class="progress"><span style="width:'+pct+'%"></span></div></div>'}
 function assessmentFields(){return {thinkingEvaluation:$('record-thinking').value,codingEvaluation:$('record-coding').value,topics:ANALYSIS.csv($('record-topics').value),gaps:ANALYSIS.csv($('record-gaps').value)}}
 function fillAssessmentFields(r){const n=ANALYSIS.normalize(r||{});$('record-thinking').value=n.thinking;$('record-coding').value=n.coding;$('record-topics').value=n.topics.join('、');$('record-gaps').value=n.gaps.join('、');$('assessment-details').open=Boolean(n.thinking||n.coding||n.topics.length||n.gaps.length)}
@@ -256,19 +273,38 @@ function renderAbilityCards(section){
  }
 }
 function topicItem(label,detail){return '<div class="topic-item"><div class="topic-name">'+esc(label)+'</div><div class="topic-detail">'+esc(detail)+'</div></div>'}
+function evidenceButton(kind,name){return '<button class="btn small" data-evidence-kind="'+kind+'" data-evidence-name="'+esc(name)+'">查看相关记录</button>'}
 function renderTopicInsights(){
  const a=ANALYSIS.calculate(db.records),box=$('topic-assessment'),gapBox=$('knowledge-gaps'),allBox=$('all-topics-summary');
- const label=value=>value===null?'未评估':value>=3.2?'表现较强':value<=2.4?'有待强化':'持续训练中';
- if(box){
-  const strong=a.strengths.map(t=>topicItem('较强 · '+t.name,'练习 '+t.count+' 题 · 近期评估表现较强')).join('');
-  const weak=a.weaknesses.map(t=>topicItem('待强化 · '+t.name,'练习 '+t.count+' 题 · 近期评估显示需要加强')).join('');
-  box.innerHTML=strong+weak||'<div class="empty">同一知识板块至少记录 3 道题，并填写相应评估，才会判断强弱。</div>';
- }
- if(gapBox)gapBox.innerHTML=a.gaps.length?a.gaps.map(g=>topicItem(g.name,'明确记录为知识欠缺 '+g.count+' 次')).join(''):'<div class="empty">尚未填写知识点缺口。遇到不会或不熟悉的算法时，可以在单题记录里登记。</div>';
- if(allBox)allBox.innerHTML=a.topics.length?a.topics.slice(0,18).map(t=>{
-  const detail='共 '+t.count+' 题 · 思维 '+label(t.thinking)+'（'+t.thinkingCount+'条）'+' · 程序 '+label(t.coding)+'（'+t.codingCount+'条）';
-  return topicItem(t.name,detail)
- }).join(''):'<div class="empty">暂无知识板块记录。为做题记录填写知识点后开始统计。</div>';
+ const labels={insufficient:'证据不足',strong:'表现较强',weak:'有待强化',developing:'持续训练中'};
+ const detail=t=>'思维 '+labels[t.thinkingState]+'（'+t.thinkingCount+'题） · 代码 '+labels[t.codingState]+'（'+t.codingCount+'题）';
+ const focus=a.topics.filter(t=>['strong','weak'].includes(t.thinkingState)||['strong','weak'].includes(t.codingState));
+ box.innerHTML=focus.length?focus.map(t=>topicItem(t.name,detail(t))+evidenceButton('topics',t.name)).join(''):'<div class="empty">每个指标至少有 3 道同类题的自评后，才会判断强弱。可先补充已有记录。</div>';
+ gapBox.innerHTML=a.gaps.length?a.gaps.map(g=>topicItem(g.name+' · '+({open:'待复习',resolved:'已复习',reopened:'再次出现'}[g.state]),'历史 '+g.count+' 题 · 待复习 '+g.openCount+' · 已复习 '+g.resolvedCount+' · 最近记录 '+(g.lastSeen||'日期未知'))+'<div class="evidence-actions">'+evidenceButton('gaps',g.name)+'<button class="btn small" data-review-gap="'+esc(g.name)+'" data-resolve="'+(g.openCount?'yes':'no')+'">'+(g.openCount?'标记当前缺口已复习':'重新列为待复习')+'</button></div>').join(''):'<div class="empty">尚未记录知识缺口；这不代表没有盲区。在单题复盘里登记不熟悉的算法。</div>';
+ allBox.innerHTML=a.topics.length?a.topics.map(t=>topicItem(t.name,'共 '+t.count+' 题 · '+detail(t))+evidenceButton('topics',t.name)).join(''):'<div class="empty">暂无知识板块记录。请为已有训练补充标签。</div>';
+ renderTrainingEvidence();
+}
+function renderTrainingEvidence(){
+ const a=ANALYSIS.evidence(db.records,todayISO()),q=a.quality;
+ const value=s=>s.value===null?'未评估':s.value.toFixed(1);
+ const metric=(name,s)=>'<div class="evidence-metric"><strong>'+name+'训练表现</strong><div class="evidence-number">'+value(s)+'</div><div class="evidence-note">'+s.count+' 条近期自评 / 全部 '+s.total+' 条 · '+s.confidence+'</div></div>';
+ $('training-evidence').innerHTML='<div class="evidence-grid">'+metric('思维',a.thought)+metric('代码',a.coding)+'</div><p class="evidence-note">去重后 '+q.total+' 题 · 至少一项自评 '+q.assessed+' 题 · 有算法标签 '+q.tagged+' 题'+(q.total?' · 评估覆盖 '+Math.round(q.assessed/q.total*100)+'%':'')+'。'+(q.duplicates?'发现 '+q.duplicates+' 条重复身份记录，分析已去重。':'')+(q.invalidDates?'有 '+q.invalidDates+' 条日期缺失、无效或在未来，未纳入趋势。':'')+'</p><div class="evidence-actions"><button class="btn small" data-evidence-filter="missing">补充单题评估</button><button class="btn small" data-evidence-filter="untagged">补充算法标签</button></div>';
+ const comparison=(key,name)=>{const t=a.trend[key];return '<div class="evidence-metric"><strong>'+name+'</strong><div class="evidence-number">'+(t.delta===null?'样本不足':(t.delta>0?'+':'')+t.delta.toFixed(1))+'</div><div class="evidence-note">最近 '+value(t.current)+'（'+t.current.count+'题） · 之前 '+value(t.previous)+'（'+t.previous.count+'题）</div></div>'};
+ const cell=s=>s.count?value(s)+' / '+s.count+'题':'— / 0题';
+ $('training-trend').innerHTML='<div class="evidence-grid">'+comparison('thought','思维变化')+comparison('coding','代码变化')+'</div><p class="evidence-note">每期各至少 5 条自评才显示差值。题目难度、标签组成和自评标准变化都可能影响均值；差值不等于能力提升。已评估题的填写难度均值：最近 '+(a.periods.current.rating??'—')+'（'+a.periods.current.ratedCount+'题），之前 '+(a.periods.previous.rating??'—')+'（'+a.periods.previous.ratedCount+'题）；不同平台难度不可直接比较。</p><div class="trend-scroll"><table class="trend-table"><caption>最近 8 个七日区间 · 均值 / 自评题数</caption><thead><tr><th scope="col">训练日期</th><th scope="col">思维</th><th scope="col">代码</th></tr></thead><tbody>'+a.weeks.map(w=>'<tr><td>'+w.start+' ～ '+w.end+'</td><td>'+cell(w.thought)+'</td><td>'+cell(w.coding)+'</td></tr>').join('')+'</tbody></table></div>';
+}
+function openEvidenceRecords(kind,name,filter='all'){
+ evidenceScope=kind?{kind,name}:null;$('record-search').value='';$('record-status-filter').value='all';$('record-evidence-filter').value=filter;setView('records');
+}
+function reviewGap(name,resolve){
+ const before=db.records;
+ db.records=before.map(r=>{
+  const n=ANALYSIS.normalize(r);if(!n.gaps.includes(name))return r;
+  const reviewed=new Set(n.resolvedGaps);if(resolve)reviewed.add(name);else reviewed.delete(name);
+  return {...r,resolvedGaps:[...reviewed]};
+ });
+ if(!saveData()){db.records=before;return}
+ renderAll();showToast(resolve?'已标记复习；历史缺口仍保留，新记录会重新追踪':'已重新列为待复习');
 }
 function renderGrowth(){const saved=allSavedSeconds(),ac=db.records.filter(r=>r.status==='ac').length,rate=acRate(),timed=db.records.filter(r=>sumSeconds(r)>0),avg=timed.length?Math.round(timed.reduce((n,r)=>n+sumSeconds(r),0)/timed.length):0;$('growth-hours').textContent=(saved/3600).toFixed(saved>=36000?0:1)+' 小时';$('growth-ac').textContent=ac;$('growth-average').textContent=timed.length?fmtShort(avg):'—';$('growth-rate').textContent=rate==null?'—':rate+'%';$('growth-chart').innerHTML=chartMarkup('growth-chart');const groups=[{label:'≤ 1400',min:0,max:1400},{label:'1400–1799',min:1401,max:1799},{label:'1800–2199',min:1800,max:2199},{label:'2200+',min:2200,max:99999}];const rated=db.records.filter(r=>r.rating!==''&&r.rating!=null&&Number.isFinite(Number(r.rating)));$('difficulty-distribution').innerHTML=groups.map(g=>{const n=rated.filter(r=>Number(r.rating)>=g.min&&Number(r.rating)<=g.max).length;return progressMarkup(g.label,n,rated.length,n+' 道')}).join('')+(rated.length?'':'<div class="muted" style="font-size:11px">填写题目 Rating 后会显示难度分布。</div>');$('phase-distribution').innerHTML='';renderCfChart();const insights=[];if(!db.records.length){insights.push(['先积累第一批记录','每次训练后保存题目状态与单题总耗时，趋势分析会随着数据积累变得更有意义。'])}else{insights.push(['训练记录数量', '目前共保存 '+db.records.length+' 条做题记录，其中 '+ac+' 条标记为已 AC。']);if(!timed.length)insights.push(['补充训练计时','目前记录尚无计时时长。使用训练计时页记录单题总耗时。']);else insights.push(['单题平均耗时','有计时数据的 '+timed.length+' 条记录，平均每条约 '+fmtShort(avg)+'。']);if(rated.length<db.records.length)insights.push(['补充题目难度','已有 '+rated.length+' 条记录填写 Rating；补齐官方难度后可以更准确地观察训练分布。']);if(rate!==null)insights.push(['记录 AC 率', '当前记录的 AC 率为 '+rate+'%。它只反映你保存到本工具的题目，不等于平台全量通过率。'])}$('insights').innerHTML=insights.map(x=>'<div class="insight"><strong>'+esc(x[0])+'</strong><p>'+esc(x[1])+'</p></div>').join('');renderAbilityCards('growth');renderTopicInsights()}
 function renderCfChart(){
@@ -374,13 +410,17 @@ function importData(file){if(!file)return;const reader=new FileReader();reader.o
 function deleteRecord(id){const r=db.records.find(x=>x.id===id);if(!r)return;if(!confirm('确定删除这条做题记录？此操作无法撤销，请确认已备份重要数据。'))return;db.records=db.records.filter(x=>x.id!==id);saveData();renderAll();showToast('记录已删除')}
 function clearData(){if(!confirm('确定清空本机所有训练记录、计时和档案吗？建议先导出备份。此操作无法撤销。'))return;db=freshData();saveData();renderAll();showToast('本机数据已清空')}
 document.addEventListener('click',function(e){
+  const review=e.target.closest('[data-review-gap]');if(review){reviewGap(review.dataset.reviewGap,review.dataset.resolve==='yes');return}
+  const evidence=e.target.closest('[data-evidence-name]');if(evidence){openEvidenceRecords(evidence.dataset.evidenceKind,evidence.dataset.evidenceName);return}
+  const filter=e.target.closest('[data-evidence-filter]');if(filter){openEvidenceRecords(null,null,filter.dataset.evidenceFilter);return}
+  if(e.target.closest('[data-clear-scope]')){evidenceScope=null;renderRecords();return}
   const nav=e.target.closest('[data-view]');if(nav){setView(nav.dataset.view);return}
   const quick=e.target.closest('[data-quick-phase]');if(quick){db.timer.phase='thinking';if(!db.timer.active)db.timer.active={phase:'thinking',startedAt:Date.now()};saveData();setView('timer');renderTimer();return}
   const edit=e.target.closest('[data-edit-record]');if(edit){openEditRecord(edit.dataset.editRecord);return}
   const del=e.target.closest('[data-delete-record]');if(del){deleteRecord(del.dataset.deleteRecord);return}
 });
 $('timer-toggle').addEventListener('click',toggleTimer);$('timer-reset').addEventListener('click',resetPhase);$('timer-problem').addEventListener('input',function(){db.timer.title=this.value;saveData();$('timer-title-side').textContent=db.timer.title||'未填写'});$('save-timed-record').addEventListener('click',()=>openRecordModal(true));$('new-record').addEventListener('click',()=>openRecordModal(false));$('close-modal').addEventListener('click',closeModal);$('cancel-modal').addEventListener('click',closeModal);$('record-modal').addEventListener('click',e=>{if(e.target===$('record-modal'))closeModal()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});$('record-form').addEventListener('submit',saveRecord);
-$('record-search').addEventListener('input',renderRecords);$('record-status-filter').addEventListener('change',renderRecords);$('record-sort').addEventListener('change',renderRecords);
+$('record-evidence-filter').addEventListener('change',renderRecords);$('record-search').addEventListener('input',renderRecords);$('record-status-filter').addEventListener('change',renderRecords);$('record-sort').addEventListener('change',renderRecords);
 $('profile-form').addEventListener('submit',function(e){e.preventDefault();const parseRating=id=>{const raw=$(id).value.trim();if(!raw)return null;const n=Number(raw);return Number.isInteger(n)&&n>=0&&n<=4000?n:NaN};const thinkingRating=parseRating('profile-thinking-rating'),codingRating=parseRating('profile-coding-rating');if(Number.isNaN(thinkingRating)||Number.isNaN(codingRating)){showToast('CF 等效 Rating 请填写 0–4000 的整数');return}db.profile.name=$('profile-name').value.trim();db.profile.handle=$('profile-handle').value.trim();db.profile.goal=$('profile-goal').value.trim();db.profile.thinkingRating=thinkingRating;db.profile.codingRating=codingRating;saveData();fillProfile();renderHome();renderGrowth();showToast('个人档案已保存')});
 $('cf-sync-btn').addEventListener('click',syncCodeforces);$('cf-profile-link').addEventListener('click',openCfProfile);
 $('export-data').addEventListener('click',exportData);$('import-data').addEventListener('click',()=>$('import-file').click());$('import-file').addEventListener('change',function(){if(this.files&&this.files[0])importData(this.files[0]);this.value=''});$('clear-data').addEventListener('click',clearData);
@@ -396,3 +436,4 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
 </script>
 </body>
 </html>
+
