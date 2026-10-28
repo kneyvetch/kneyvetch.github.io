@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - hexo-source-recovery-2026-10-28
   pull_request:
     branches:
       - main
@@ -12,6 +11,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 concurrency:
   group: kney-blog-build
@@ -137,14 +137,6 @@ jobs:
           grep -q "background.jpg" public/css/main.css
           echo "Verified three retained legacy posts and removal of Hello World/text/喜欢, ACM page, tags, original background, and nojekyll marker."
 
-      - name: Keep a preview artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: kney-hexo-preview
-          path: hexo-source/public
-          if-no-files-found: error
-          retention-days: 7
-
       - name: Publish generated static files to the main branch
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         shell: bash
@@ -166,3 +158,18 @@ jobs:
           else
             echo "Generated site matches the currently published files."
           fi
+
+      - name: Delete legacy Hexo preview artifacts
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh api --paginate "repos/${{ github.repository }}/actions/artifacts?per_page=100" --jq '.artifacts[] | select(.name=="kney-hexo-preview") | .id' > /tmp/legacy_preview_artifacts
+          while IFS= read -r id; do
+            if [[ "$id" =~ ^[0-9]+$ ]]; then
+              gh api --method DELETE "repos/${{ github.repository }}/actions/artifacts/$id"
+              echo "Deleted legacy preview artifact $id"
+            fi
+          done < /tmp/legacy_preview_artifacts
