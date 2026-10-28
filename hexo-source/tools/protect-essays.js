@@ -85,7 +85,20 @@ if(excerptCount!==3)throw new Error('Expected 3 homepage excerpts; found '+excer
 fs.writeFileSync(index,home);
 const revision='20261028-encrypted-v6';
 function refreshLinks(h){return h.replace(/href="(\/categories\/essays\/|\/2022\/09\/29\/(?:%E9%9A%8F%E7%AC%94|随笔)\/|\/2022\/11\/10\/(?:%E8%90%BD%E5%B9%95|落幕|%E5%A4%8F%E8%AE%B0|夏记)\/)(#[^"]*)?"/gi,(_whole,url,fragment)=>'href="'+url+'?rev='+revision+(fragment||'')+'"')}
-function walk(dir){for(const item of fs.readdirSync(dir,{withFileTypes:true})){const file=path.join(dir,item.name);if(item.isDirectory())walk(file);else if(item.isFile()&&file.endsWith('.html')){const previous=fs.readFileSync(file,'utf8'),current=refreshLinks(previous);if(previous!==current)fs.writeFileSync(file,current)}}}
+function walk(dir){
+ for(const item of fs.readdirSync(dir,{withFileTypes:true})){
+  const file=path.join(dir,item.name);
+  if(item.isDirectory()){walk(file);continue}
+  if(!item.isFile()||!file.endsWith('.html'))continue;
+  const previous=fs.readFileSync(file,'utf8');
+  let current=refreshLinks(previous);
+  const relative=path.relative(root,file).split(path.sep).join('/');
+  if(/^(?:archives|tags)\//.test(relative)&&!/<meta\s+name="robots"/i.test(current)){
+   current=current.replace(/<head\b([^>]*)>/i,'<head$1><meta name="robots" content="noindex,noarchive,nosnippet">');
+  }
+  if(previous!==current)fs.writeFileSync(file,current);
+ }
+}
 walk(root);
 for(const n of names){
  const file=path.join(root,'protected',n+'.json');
