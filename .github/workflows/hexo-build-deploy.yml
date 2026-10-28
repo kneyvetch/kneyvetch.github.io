@@ -1,0 +1,86 @@
+name: Build and publish Kney's Hexo blog
+
+on:
+  push:
+    branches:
+      - main
+      - hexo-source-recovery-2026-10-28
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kney-blog-build
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Hexo dependencies
+        working-directory: hexo-source
+        run: npm install --no-audit --no-fund
+
+      - name: Build site
+        working-directory: hexo-source
+        run: npm run build
+
+      - name: Verify generated pages and assets
+        working-directory: hexo-source
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s public/index.html
+          test -s public/acm/index.html
+          test -s public/2022/09/26/hello-world/index.html
+          test -s public/2022/09/26/text/index.html
+          test -s public/2022/09/29/随笔/index.html
+          test -s public/2022/11/10/落幕/index.html
+          test -s public/2022/11/10/夏记/index.html
+          test -s public/2022/11/12/喜欢/index.html
+          test -s public/images/background.jpg
+          test -s public/css/main.css
+          test -f public/.nojekyll
+          echo "Verified six legacy posts, ACM page, theme CSS, background, and nojekyll marker."
+
+      - name: Keep a preview artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: kney-hexo-preview
+          path: hexo-source/public
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Publish generated static files to the main branch
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        shell: bash
+        run: |
+          set -euo pipefail
+          rsync -a --delete \
+            --exclude='/.git/' \
+            --exclude='/.github/' \
+            --exclude='/hexo-source/' \
+            --exclude='/README.md' \
+            --exclude='/.gitignore' \
+            hexo-source/public/ ./
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A -- . ':!hexo-source' ':!.github'
+          if ! git diff --cached --quiet; then
+            git commit -m "Deploy generated Hexo site [skip ci]"
+            git push
+          else
+            echo "Generated site matches the currently published files."
+          fi
